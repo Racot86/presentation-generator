@@ -1,0 +1,328 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "Література й національне життя",
+      "start_page": 5,
+      "end_page": 10
+    },
+    {
+      "level": 1,
+      "title": "Реалістична українська проза",
+      "start_page": 11,
+      "end_page": 52
+    },
+    {
+      "level": 2,
+      "title": "Іван Нечуй-Левицький",
+      "start_page": 15,
+      "end_page": 31
+    },
+    {
+      "level": 3,
+      "title": "Повість «Кайдашева сім’я»",
+      "start_page": 16,
+      "end_page": 23
+    },
+    {
+      "level": 3,
+      "title": "Кайдашева сім’я",
+      "start_page": 24,
+      "end_page": 31
+    },
+    {
+      "level": 2,
+      "title": "Панас Мирний",
+      "start_page": 32,
+      "end_page": 52
+    },
+    {
+      "level": 3,
+      "title": "Українське народне життя в реалістичному освітленні («Хіба ревуть воли, як ясла повні?»)",
+      "start_page": 34,
+      "end_page": 41
+    },
+    {
+      "level": 3,
+      "title": "Хіба ревуть воли, як ясла повні?",
+      "start_page": 42,
+      "end_page": 52
+    },
+    {
+      "level": 1,
+      "title": "Театр корифеїв",
+      "start_page": 53,
+      "end_page": 70
+    },
+    {
+      "level": 2,
+      "title": "Іван Карпенко-Карий",
+      "start_page": 57,
+      "end_page": 70
+    },
+    {
+      "level": 3,
+      "title": "«Мартин Боруля»",
+      "start_page": 60,
+      "end_page": 63
+    },
+    {
+      "level": 3,
+      "title": "Мартин Боруля",
+      "start_page": 64,
+      "end_page": 70
+    },
+    {
+      "level": 1,
+      "title": "Іван Франко",
+      "start_page": 72,
+      "end_page": 122
+    },
+    {
+      "level": 2,
+      "title": "Поезія Івана Франка",
+      "start_page": 74,
+      "end_page": 101
+    },
+    {
+      "level": 3,
+      "title": "Збірка «З вершин і низин»",
+      "start_page": 74,
+      "end_page": 84
+    },
+    {
+      "level": 4,
+      "title": "Гімн",
+      "start_page": 76,
+      "end_page": 77
+    },
+    {
+      "level": 4,
+      "title": "Сікстинська Мадонна",
+      "start_page": 78,
+      "end_page": 80
+    },
+    {
+      "level": 4,
+      "title": "«Ой ти, дівчино, з горіха зерня…»",
+      "start_page": 81,
+      "end_page": 81
+    },
+    {
+      "level": 4,
+      "title": "«Чого являєшся мені…»",
+      "start_page": 82,
+      "end_page": 84
+    },
+    {
+      "level": 3,
+      "title": "Легенда про вічне життя",
+      "start_page": 85,
+      "end_page": 88
+    },
+    {
+      "level": 3,
+      "title": "Філософська поема «Мойсей»",
+      "start_page": 89,
+      "end_page": 100
+    },
+    {
+      "level": 4,
+      "title": "Мойсей",
+      "start_page": 93,
+      "end_page": 100
+    },
+    {
+      "level": 3,
+      "title": "Новела «Сойчине крило»",
+      "start_page": 102,
+      "end_page": 105
+    },
+    {
+      "level": 4,
+      "title": "Сойчине крило",
+      "start_page": 106,
+      "end_page": 122
+    },
+    {
+      "level": 1,
+      "title": "Модерна українська проза",
+      "start_page": 123,
+      "end_page": 182
+    },
+    {
+      "level": 2,
+      "title": "Михайло Коцюбинський",
+      "start_page": 126,
+      "end_page": 152
+    },
+    {
+      "level": 3,
+      "title": "Новела «Intermezzo»",
+      "start_page": 128,
+      "end_page": 131
+    },
+    {
+      "level": 3,
+      "title": "Intermezzo",
+      "start_page": 132,
+      "end_page": 138
+    },
+    {
+      "level": 3,
+      "title": "Повість «Тіні забутих предків»",
+      "start_page": 139,
+      "end_page": 142
+    },
+    {
+      "level": 3,
+      "title": "Тіні забутих предків",
+      "start_page": 143,
+      "end_page": 152
+    },
+    {
+      "level": 2,
+      "title": "Ольга Кобилянська",
+      "start_page": 153,
+      "end_page": 164
+    },
+    {
+      "level": 3,
+      "title": "Impromptu phantasie",
+      "start_page": 157,
+      "end_page": 160
+    },
+    {
+      "level": 3,
+      "title": "Новела «Valse mélancolique»",
+      "start_page": 161,
+      "end_page": 164
+    },
+    {
+      "level": 2,
+      "title": "Василь Стефаник",
+      "start_page": 165,
+      "end_page": 176
+    },
+    {
+      "level": 3,
+      "title": "Новела «Камінний хрест»",
+      "start_page": 168,
+      "end_page": 169
+    },
+    {
+      "level": 3,
+      "title": "Камінний хрест",
+      "start_page": 170,
+      "end_page": 176
+    },
+    {
+      "level": 2,
+      "title": "Володимир Винниченко",
+      "start_page": 177,
+      "end_page": 182
+    },
+    {
+      "level": 3,
+      "title": "Новела «Момент»",
+      "start_page": 180,
+      "end_page": 182
+    },
+    {
+      "level": 1,
+      "title": "Образне слово поетичного модернізму",
+      "start_page": 183,
+      "end_page": 233
+    },
+    {
+      "level": 2,
+      "title": "Леся Українка",
+      "start_page": 186,
+      "end_page": 217
+    },
+    {
+      "level": 3,
+      "title": "Contra spem spero!",
+      "start_page": 189,
+      "end_page": 191
+    },
+    {
+      "level": 3,
+      "title": "«Стояла я i слухала весну…»",
+      "start_page": 192,
+      "end_page": 192
+    },
+    {
+      "level": 3,
+      "title": "«Слово, чому ти не твердая криця…»",
+      "start_page": 193,
+      "end_page": 194
+    },
+    {
+      "level": 3,
+      "title": "«Мріє, не зрадь!..»",
+      "start_page": 195,
+      "end_page": 195
+    },
+    {
+      "level": 3,
+      "title": "Драма-феєрія «Лісова пісня»",
+      "start_page": 196,
+      "end_page": 203
+    },
+    {
+      "level": 4,
+      "title": "Лісова пісня",
+      "start_page": 204,
+      "end_page": 217
+    },
+    {
+      "level": 2,
+      "title": "Микола Вороний",
+      "start_page": 218,
+      "end_page": 223
+    },
+    {
+      "level": 3,
+      "title": "Блакитна Панна",
+      "start_page": 221,
+      "end_page": 221
+    },
+    {
+      "level": 3,
+      "title": "Інфанта",
+      "start_page": 222,
+      "end_page": 223
+    },
+    {
+      "level": 2,
+      "title": "Олександр Олесь",
+      "start_page": 224,
+      "end_page": 233
+    },
+    {
+      "level": 3,
+      "title": "«З журбою радість обнялась…»",
+      "start_page": 226,
+      "end_page": 226
+    },
+    {
+      "level": 3,
+      "title": "Чари ночі",
+      "start_page": 227,
+      "end_page": 228
+    },
+    {
+      "level": 3,
+      "title": "«О слово рідне! Орле скутий!..»",
+      "start_page": 229,
+      "end_page": 233
+    },
+    {
+      "level": 1,
+      "title": "Словник термінів і понять",
+      "start_page": 234,
+      "end_page": 238
+    }
+  ]
+}

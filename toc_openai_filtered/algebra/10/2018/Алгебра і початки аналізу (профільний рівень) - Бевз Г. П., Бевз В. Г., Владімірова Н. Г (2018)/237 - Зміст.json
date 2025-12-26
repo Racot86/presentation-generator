@@ -1,0 +1,148 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "ФУНКЦІЇ, МНОГОЧЛЕНИ, РІВНЯННЯ І НЕРІВНОСТІ",
+      "start_page": 5,
+      "end_page": 78
+    },
+    {
+      "level": 2,
+      "title": "Множини та операції над ними",
+      "start_page": 5,
+      "end_page": 14
+    },
+    {
+      "level": 2,
+      "title": "Числові функції",
+      "start_page": 15,
+      "end_page": 28
+    },
+    {
+      "level": 2,
+      "title": "Властивості функції",
+      "start_page": 29,
+      "end_page": 41
+    },
+    {
+      "level": 2,
+      "title": "Ділення многочленів",
+      "start_page": 42,
+      "end_page": 48
+    },
+    {
+      "level": 2,
+      "title": "Метод інтервалів",
+      "start_page": 49,
+      "end_page": 56
+    },
+    {
+      "level": 2,
+      "title": "Задачі з параметрами",
+      "start_page": 57,
+      "end_page": 65
+    },
+    {
+      "level": 2,
+      "title": "Математична індукція",
+      "start_page": 66,
+      "end_page": 74
+    },
+    {
+      "level": 1,
+      "title": "СТЕПЕНЕВА ФУНКЦІЯ",
+      "start_page": 79,
+      "end_page": 130
+    },
+    {
+      "level": 2,
+      "title": "Корені n-го степеня",
+      "start_page": 79,
+      "end_page": 88
+    },
+    {
+      "level": 2,
+      "title": "Функція y = n x та її графік",
+      "start_page": 89,
+      "end_page": 95
+    },
+    {
+      "level": 2,
+      "title": "Ірраціональні рівняння",
+      "start_page": 96,
+      "end_page": 103
+    },
+    {
+      "level": 2,
+      "title": "Ірраціональні нерівності",
+      "start_page": 104,
+      "end_page": 109
+    },
+    {
+      "level": 2,
+      "title": "Степені з раціональними показниками",
+      "start_page": 110,
+      "end_page": 118
+    },
+    {
+      "level": 2,
+      "title": "Степеневі функції",
+      "start_page": 119,
+      "end_page": 126
+    },
+    {
+      "level": 1,
+      "title": "ТРИГОНОМЕТРИЧНІ ФУНКЦІЇ",
+      "start_page": 131,
+      "end_page": 203
+    },
+    {
+      "level": 2,
+      "title": "Синус, косинус, тангенс і котангенс кута",
+      "start_page": 131,
+      "end_page": 139
+    },
+    {
+      "level": 2,
+      "title": "Тригонометричні функції числових аргументів",
+      "start_page": 140,
+      "end_page": 148
+    },
+    {
+      "level": 2,
+      "title": "Основні тригонометричні формули",
+      "start_page": 149,
+      "end_page": 155
+    },
+    {
+      "level": 2,
+      "title": "Формули зведення",
+      "start_page": 156,
+      "end_page": 162
+    },
+    {
+      "level": 2,
+      "title": "Властивості та графіки тригонометричних функцій",
+      "start_page": 163,
+      "end_page": 176
+    },
+    {
+      "level": 2,
+      "title": "Формули додавання",
+      "start_page": 177,
+      "end_page": 183
+    },
+    {
+      "level": 2,
+      "title": "Формули подвійного і половинного аргументів",
+      "start_page": 184,
+      "end_page": 192
+    },
+    {
+      "level": 2,
+      "title": "Формули суми і різниці тригонометричних функцій",
+      "start_page": 193,
+      "end_page": 200
+    }
+  ]
+}

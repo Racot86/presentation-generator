@@ -1,0 +1,130 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "НЕРІВНОСТІ",
+      "start_page": 8,
+      "end_page": 73
+    },
+    {
+      "level": 2,
+      "title": "Загальні відомості про нерівності",
+      "start_page": 8,
+      "end_page": 16
+    },
+    {
+      "level": 2,
+      "title": "Властивості числових нерівностей",
+      "start_page": 17,
+      "end_page": 23
+    },
+    {
+      "level": 2,
+      "title": "Подвійні нерівності",
+      "start_page": 24,
+      "end_page": 30
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування нерівностей з однією змінною",
+      "start_page": 31,
+      "end_page": 40
+    },
+    {
+      "level": 2,
+      "title": "Об’єднання і переріз множин. Числові проміжки",
+      "start_page": 41,
+      "end_page": 51
+    },
+    {
+      "level": 2,
+      "title": "Системи нерівностей з однією змінною",
+      "start_page": 52,
+      "end_page": 59
+    },
+    {
+      "level": 2,
+      "title": "Доведення нерівностей",
+      "start_page": 60,
+      "end_page": 65
+    },
+    {
+      "level": 1,
+      "title": "КВАДРАТИЧНА ФУНКЦІЯ",
+      "start_page": 74,
+      "end_page": 151
+    },
+    {
+      "level": 2,
+      "title": "Функції",
+      "start_page": 74,
+      "end_page": 84
+    },
+    {
+      "level": 2,
+      "title": "Властивості функцій",
+      "start_page": 85,
+      "end_page": 97
+    },
+    {
+      "level": 2,
+      "title": "Перетворення графіків функцій",
+      "start_page": 98,
+      "end_page": 108
+    },
+    {
+      "level": 2,
+      "title": "Квадратична функція",
+      "start_page": 109,
+      "end_page": 117
+    },
+    {
+      "level": 2,
+      "title": "Квадратні нерівності",
+      "start_page": 118,
+      "end_page": 125
+    },
+    {
+      "level": 2,
+      "title": "Системи рівнянь другого степеня",
+      "start_page": 126,
+      "end_page": 135
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач складанням систем рівнянь",
+      "start_page": 136,
+      "end_page": 143
+    },
+    {
+      "level": 1,
+      "title": "ЧИСЛОВІ ПОСЛІДОВНОСТІ",
+      "start_page": 152,
+      "end_page": 181
+    },
+    {
+      "level": 2,
+      "title": "Послідовність",
+      "start_page": 152,
+      "end_page": 160
+    },
+    {
+      "level": 2,
+      "title": "Арифметична прогресія",
+      "start_page": 161,
+      "end_page": 170
+    },
+    {
+      "level": 2,
+      "title": "Геометрична прогресія",
+      "start_page": 171,
+      "end_page": 180
+    },
+    {
+      "level": 2,
+      "title": "Задачі на обчислення сум",
+      "start_page": 181,
+      "end_page": 181
+    }
+  ]
+}

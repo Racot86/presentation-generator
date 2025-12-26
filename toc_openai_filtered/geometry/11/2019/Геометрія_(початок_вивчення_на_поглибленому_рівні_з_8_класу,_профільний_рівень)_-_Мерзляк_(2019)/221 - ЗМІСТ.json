@@ -1,0 +1,172 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "Многогранники",
+      "start_page": 5,
+      "end_page": 61
+    },
+    {
+      "level": 2,
+      "title": "Призма",
+      "start_page": 6,
+      "end_page": 20
+    },
+    {
+      "level": 2,
+      "title": "Паралелепіпед",
+      "start_page": 21,
+      "end_page": 28
+    },
+    {
+      "level": 2,
+      "title": "Піраміда",
+      "start_page": 29,
+      "end_page": 38
+    },
+    {
+      "level": 2,
+      "title": "Площі поверхонь подібних многогранників. Зрізана піраміда",
+      "start_page": 39,
+      "end_page": 42
+    },
+    {
+      "level": 2,
+      "title": "Тетраедр",
+      "start_page": 43,
+      "end_page": 52
+    },
+    {
+      "level": 3,
+      "title": "Платонові тіла",
+      "start_page": 53,
+      "end_page": 55
+    },
+    {
+      "level": 3,
+      "title": "Геометричне тіло",
+      "start_page": 56,
+      "end_page": 59
+    },
+    {
+      "level": 1,
+      "title": "Тіла обертання",
+      "start_page": 62,
+      "end_page": 160
+    },
+    {
+      "level": 2,
+      "title": "Циліндр",
+      "start_page": 63,
+      "end_page": 73
+    },
+    {
+      "level": 2,
+      "title": "Комбінації циліндра та призми",
+      "start_page": 74,
+      "end_page": 81
+    },
+    {
+      "level": 2,
+      "title": "Конус",
+      "start_page": 83,
+      "end_page": 89
+    },
+    {
+      "level": 2,
+      "title": "Зрізаний конус",
+      "start_page": 90,
+      "end_page": 96
+    },
+    {
+      "level": 2,
+      "title": "Комбінації конуса та піраміди",
+      "start_page": 97,
+      "end_page": 104
+    },
+    {
+      "level": 2,
+      "title": "Сфера та куля. Рівняння сфери",
+      "start_page": 105,
+      "end_page": 109
+    },
+    {
+      "level": 2,
+      "title": "Взаємне розміщення сфери та площини",
+      "start_page": 110,
+      "end_page": 121
+    },
+    {
+      "level": 3,
+      "title": "Елементи сферичної геометрії",
+      "start_page": 122,
+      "end_page": 126
+    },
+    {
+      "level": 2,
+      "title": "Многогранники, вписані у сферу",
+      "start_page": 127,
+      "end_page": 135
+    },
+    {
+      "level": 2,
+      "title": "Многогранники, описані навколо сфери",
+      "start_page": 136,
+      "end_page": 143
+    },
+    {
+      "level": 2,
+      "title": "Тіла обертання, вписані у сферу",
+      "start_page": 144,
+      "end_page": 148
+    },
+    {
+      "level": 2,
+      "title": "Тіла обертання, описані навколо сфери",
+      "start_page": 149,
+      "end_page": 153
+    },
+    {
+      "level": 3,
+      "title": "Еліпс",
+      "start_page": 154,
+      "end_page": 156
+    },
+    {
+      "level": 1,
+      "title": "Об’єми тіл. Площа сфери",
+      "start_page": 161,
+      "end_page": 198
+    },
+    {
+      "level": 2,
+      "title": "Об’єм тіла. Формули для обчислення об’єму призми",
+      "start_page": 162,
+      "end_page": 169
+    },
+    {
+      "level": 2,
+      "title": "Формули для обчислення об’ємів піраміди та зрізаної піраміди",
+      "start_page": 170,
+      "end_page": 180
+    },
+    {
+      "level": 2,
+      "title": "Об’єми тіл обертання",
+      "start_page": 181,
+      "end_page": 190
+    },
+    {
+      "level": 2,
+      "title": "Площа сфери",
+      "start_page": 191,
+      "end_page": 193
+    },
+    {
+      "level": 3,
+      "title": "Означення Мінковського",
+      "start_page": 194,
+      "end_page": 197
+    }
+  ]
+}

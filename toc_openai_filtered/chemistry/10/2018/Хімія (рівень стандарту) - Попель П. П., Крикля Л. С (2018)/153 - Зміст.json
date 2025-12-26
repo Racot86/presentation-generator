@@ -1,0 +1,244 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "Теорія будови органічних сполук",
+      "start_page": 5,
+      "end_page": 26
+    },
+    {
+      "level": 2,
+      "title": "Органічні сполуки",
+      "start_page": 5,
+      "end_page": 9
+    },
+    {
+      "level": 2,
+      "title": "Теорія будови органічних сполук",
+      "start_page": 10,
+      "end_page": 14
+    },
+    {
+      "level": 2,
+      "title": "Хімічний зв’язок в органічних сполуках",
+      "start_page": 15,
+      "end_page": 20
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач на виведення хімічної формули речовини (І)",
+      "start_page": 21,
+      "end_page": 26
+    },
+    {
+      "level": 1,
+      "title": "Вуглеводні",
+      "start_page": 27,
+      "end_page": 75
+    },
+    {
+      "level": 2,
+      "title": "Алкани",
+      "start_page": 27,
+      "end_page": 33
+    },
+    {
+      "level": 2,
+      "title": "Властивості алканів",
+      "start_page": 34,
+      "end_page": 38
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач на виведення хімічної формули речовини (ІІ)",
+      "start_page": 40,
+      "end_page": 44
+    },
+    {
+      "level": 2,
+      "title": "Алкени",
+      "start_page": 45,
+      "end_page": 49
+    },
+    {
+      "level": 2,
+      "title": "Властивості алкенів",
+      "start_page": 50,
+      "end_page": 53
+    },
+    {
+      "level": 2,
+      "title": "Алкіни",
+      "start_page": 55,
+      "end_page": 59
+    },
+    {
+      "level": 2,
+      "title": "Бензен. Арени",
+      "start_page": 60,
+      "end_page": 66
+    },
+    {
+      "level": 2,
+      "title": "Добування і застосування вуглеводнів",
+      "start_page": 67,
+      "end_page": 72
+    },
+    {
+      "level": 1,
+      "title": "Оксигеновмісні органічні сполуки",
+      "start_page": 76,
+      "end_page": 153
+    },
+    {
+      "level": 2,
+      "title": "Спирти",
+      "start_page": 76,
+      "end_page": 82
+    },
+    {
+      "level": 2,
+      "title": "Насичені одноатомні спирти",
+      "start_page": 83,
+      "end_page": 90
+    },
+    {
+      "level": 2,
+      "title": "Багатоатомні спирти. Гліцерол",
+      "start_page": 91,
+      "end_page": 94
+    },
+    {
+      "level": 2,
+      "title": "Фенол",
+      "start_page": 95,
+      "end_page": 100
+    },
+    {
+      "level": 2,
+      "title": "Альдегіди",
+      "start_page": 101,
+      "end_page": 107
+    },
+    {
+      "level": 2,
+      "title": "Карбонові кислоти",
+      "start_page": 109,
+      "end_page": 113
+    },
+    {
+      "level": 2,
+      "title": "Насичені одноосновні карбонові кислоти",
+      "start_page": 114,
+      "end_page": 120
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач у разі наявності домішок у реагентах",
+      "start_page": 121,
+      "end_page": 123
+    },
+    {
+      "level": 2,
+      "title": "Естери",
+      "start_page": 124,
+      "end_page": 127
+    },
+    {
+      "level": 2,
+      "title": "Жири",
+      "start_page": 129,
+      "end_page": 134
+    },
+    {
+      "level": 2,
+      "title": "Вуглеводи. Глюкоза",
+      "start_page": 135,
+      "end_page": 140
+    },
+    {
+      "level": 2,
+      "title": "Дисахариди. Сахароза",
+      "start_page": 141,
+      "end_page": 144
+    },
+    {
+      "level": 2,
+      "title": "Полісахариди. Крохмаль, целюлоза",
+      "start_page": 145,
+      "end_page": 151
+    },
+    {
+      "level": 3,
+      "title": "П р а к т и ч н а р о б о т а. Розв’язування експериментальних задач",
+      "start_page": 152,
+      "end_page": 153
+    },
+    {
+      "level": 1,
+      "title": "Нітрогеновмісні органічні сполуки",
+      "start_page": 154,
+      "end_page": 176
+    },
+    {
+      "level": 2,
+      "title": "Аміни",
+      "start_page": 154,
+      "end_page": 159
+    },
+    {
+      "level": 2,
+      "title": "Анілін",
+      "start_page": 160,
+      "end_page": 163
+    },
+    {
+      "level": 2,
+      "title": "Амінокислоти",
+      "start_page": 164,
+      "end_page": 169
+    },
+    {
+      "level": 2,
+      "title": "Білки",
+      "start_page": 170,
+      "end_page": 176
+    },
+    {
+      "level": 1,
+      "title": "Синтетичні високомолекулярні органічні сполуки і матеріали на їх основі",
+      "start_page": 177,
+      "end_page": 205
+    },
+    {
+      "level": 2,
+      "title": "Синтетичні високомолекулярні сполуки",
+      "start_page": 177,
+      "end_page": 181
+    },
+    {
+      "level": 2,
+      "title": "Добування високомолекулярних сполук",
+      "start_page": 182,
+      "end_page": 184
+    },
+    {
+      "level": 2,
+      "title": "Пластмаси. Полімери — основа пластмас",
+      "start_page": 185,
+      "end_page": 191
+    },
+    {
+      "level": 2,
+      "title": "Каучуки. Гума",
+      "start_page": 192,
+      "end_page": 198
+    },
+    {
+      "level": 2,
+      "title": "Природні та хімічні волокна",
+      "start_page": 199,
+      "end_page": 202
+    }
+  ]
+}
