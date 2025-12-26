@@ -1,0 +1,424 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "ПІСЕННІ СКАРБИ РІДНОГО КРАЮ",
+      "start_page": 4,
+      "end_page": 46
+    },
+    {
+      "level": 2,
+      "title": "ПІСНЯ В ЖИТТІ УКРАЇНЦІВ",
+      "start_page": 4,
+      "end_page": 8
+    },
+    {
+      "level": 2,
+      "title": "Народні календарно-обрядові пісні",
+      "start_page": 8,
+      "end_page": 31
+    },
+    {
+      "level": 3,
+      "title": "КАЛЕНДАРНО-ОБРЯДОВІ ПІСНІ ВЕСНЯНОГО ЦИКЛУ",
+      "start_page": 10,
+      "end_page": 14
+    },
+    {
+      "level": 4,
+      "title": "Ой весна, весна – днем красна",
+      "start_page": 11,
+      "end_page": 11
+    },
+    {
+      "level": 3,
+      "title": "КАЛЕНДАРНО-ОБРЯДОВІ ПІСНІ ЛІТНЬОГО ЦИКЛУ",
+      "start_page": 14,
+      "end_page": 20
+    },
+    {
+      "level": 4,
+      "title": "РУСАЛЬНІ ПІСНІ",
+      "start_page": 14,
+      "end_page": 17
+    },
+    {
+      "level": 5,
+      "title": "У ржі на межі",
+      "start_page": 15,
+      "end_page": 15
+    },
+    {
+      "level": 5,
+      "title": "Проведу я русалочку до бору",
+      "start_page": 15,
+      "end_page": 15
+    },
+    {
+      "level": 5,
+      "title": "Ой біжить, біжить мала дівчина",
+      "start_page": 16,
+      "end_page": 16
+    },
+    {
+      "level": 4,
+      "title": "КУПАЛЬСЬКІ ПІСНІ",
+      "start_page": 17,
+      "end_page": 20
+    },
+    {
+      "level": 5,
+      "title": "Заплету віночок",
+      "start_page": 18,
+      "end_page": 18
+    },
+    {
+      "level": 5,
+      "title": "Ой вінку мій, вінку",
+      "start_page": 19,
+      "end_page": 19
+    },
+    {
+      "level": 5,
+      "title": "Купайло, Купайло!",
+      "start_page": 19,
+      "end_page": 19
+    },
+    {
+      "level": 3,
+      "title": "ЖНИВАРСЬКІ ПІСНІ",
+      "start_page": 20,
+      "end_page": 24
+    },
+    {
+      "level": 4,
+      "title": "Маяло житечко, маяло",
+      "start_page": 22,
+      "end_page": 22
+    },
+    {
+      "level": 4,
+      "title": "Там у полі криниченька",
+      "start_page": 22,
+      "end_page": 22
+    },
+    {
+      "level": 3,
+      "title": "КАЛЕНДАРНО-ОБРЯДОВІ ПІСНІ ЗИМОВОГО ЦИКЛУ",
+      "start_page": 24,
+      "end_page": 31
+    },
+    {
+      "level": 4,
+      "title": "Ой хто, хто Миколая любить",
+      "start_page": 25,
+      "end_page": 25
+    },
+    {
+      "level": 4,
+      "title": "Нова радість стала",
+      "start_page": 26,
+      "end_page": 26
+    },
+    {
+      "level": 4,
+      "title": "Добрий вечір тобі, пане господарю!",
+      "start_page": 26,
+      "end_page": 26
+    },
+    {
+      "level": 4,
+      "title": "Щедрик, щедрик, щедрівочка",
+      "start_page": 27,
+      "end_page": 27
+    },
+    {
+      "level": 4,
+      "title": "Засівна",
+      "start_page": 28,
+      "end_page": 28
+    },
+    {
+      "level": 2,
+      "title": "НАРОДНІ КОЛИСКОВІ ПІСНІ",
+      "start_page": 31,
+      "end_page": 35
+    },
+    {
+      "level": 3,
+      "title": "Ой ти, коте, коточок",
+      "start_page": 32,
+      "end_page": 32
+    },
+    {
+      "level": 3,
+      "title": "Ой ну, люлі, дитя, спать",
+      "start_page": 33,
+      "end_page": 33
+    },
+    {
+      "level": 2,
+      "title": "Пісні літературного походження",
+      "start_page": 35,
+      "end_page": 36
+    },
+    {
+      "level": 2,
+      "title": "УРОЧИСТІ ПІСНІ. ГІМН",
+      "start_page": 36,
+      "end_page": 46
+    },
+    {
+      "level": 3,
+      "title": "Павло Чубинський. Ще не вмерла України...",
+      "start_page": 38,
+      "end_page": 40
+    },
+    {
+      "level": 3,
+      "title": "Олександр Кониський. Молитва",
+      "start_page": 40,
+      "end_page": 40
+    },
+    {
+      "level": 3,
+      "title": "Степан Чарнецький, Григорій Труха. Ой у лузі червона калина похилилася",
+      "start_page": 40,
+      "end_page": 43
+    },
+    {
+      "level": 3,
+      "title": "Дмитро Луценко. Як тебе не любити, Києве мій",
+      "start_page": 43,
+      "end_page": 46
+    },
+    {
+      "level": 1,
+      "title": "ПОЕТИЧНИЙ ДИВОСВІТ",
+      "start_page": 47,
+      "end_page": 78
+    },
+    {
+      "level": 2,
+      "title": "ТАРАС ШЕВЧЕНКО",
+      "start_page": 48,
+      "end_page": 51
+    },
+    {
+      "level": 3,
+      "title": "Думка («Тече вода в синє море...»)",
+      "start_page": 49,
+      "end_page": 51
+    },
+    {
+      "level": 3,
+      "title": "Іван Підкова",
+      "start_page": 51,
+      "end_page": 55
+    },
+    {
+      "level": 2,
+      "title": "ЛЕСЯ УКРАЇНКА",
+      "start_page": 55,
+      "end_page": 64
+    },
+    {
+      "level": 3,
+      "title": "Мрії (скорочено)",
+      "start_page": 56,
+      "end_page": 58
+    },
+    {
+      "level": 3,
+      "title": "Як дитиною, бувало...",
+      "start_page": 58,
+      "end_page": 59
+    },
+    {
+      "level": 3,
+      "title": "Тиша морська",
+      "start_page": 59,
+      "end_page": 61
+    },
+    {
+      "level": 3,
+      "title": "Співець",
+      "start_page": 61,
+      "end_page": 64
+    },
+    {
+      "level": 2,
+      "title": "СТАНІСЛАВ ЧЕРНІЛЕВСЬКИЙ",
+      "start_page": 64,
+      "end_page": 70
+    },
+    {
+      "level": 3,
+      "title": "Теплота родинного інтиму...",
+      "start_page": 65,
+      "end_page": 69
+    },
+    {
+      "level": 3,
+      "title": "Забула внучка в баби черевички...",
+      "start_page": 69,
+      "end_page": 70
+    },
+    {
+      "level": 2,
+      "title": "ІРИНА ЖИЛЕНКО",
+      "start_page": 70,
+      "end_page": 78
+    },
+    {
+      "level": 3,
+      "title": "Жар-птиця",
+      "start_page": 71,
+      "end_page": 73
+    },
+    {
+      "level": 3,
+      "title": "Підкова",
+      "start_page": 73,
+      "end_page": 75
+    },
+    {
+      "level": 3,
+      "title": "Гном у буфеті",
+      "start_page": 75,
+      "end_page": 78
+    },
+    {
+      "level": 1,
+      "title": "ЖИВИЛЬНІ ДЖЕРЕЛА МУДРИХ КНИГ",
+      "start_page": 79,
+      "end_page": 135
+    },
+    {
+      "level": 2,
+      "title": "ТВОРИ НА ІСТОРИЧНУ ТЕМАТИКУ",
+      "start_page": 81,
+      "end_page": 135
+    },
+    {
+      "level": 3,
+      "title": "ВОЛОДИМИР РУТКІВСЬКИЙ",
+      "start_page": 81,
+      "end_page": 126
+    },
+    {
+      "level": 4,
+      "title": "Джури козака Швайки (уривки)",
+      "start_page": 83,
+      "end_page": 126
+    },
+    {
+      "level": 3,
+      "title": "МИКОЛА ВОРОНИЙ",
+      "start_page": 126,
+      "end_page": 134
+    },
+    {
+      "level": 4,
+      "title": "Євшан-зілля",
+      "start_page": 128,
+      "end_page": 134
+    },
+    {
+      "level": 1,
+      "title": "ЗАХОПЛИВИЙ СВІТ ПРИГОДНИЦЬКИХ і ФАНТАСТИЧНИХ ПОВІСТЕЙ",
+      "start_page": 135,
+      "end_page": 261
+    },
+    {
+      "level": 2,
+      "title": "ВСЕВОЛОД НЕСТАЙКО",
+      "start_page": 135,
+      "end_page": 167
+    },
+    {
+      "level": 3,
+      "title": "Тореадори з Васюківки (уривки)",
+      "start_page": 136,
+      "end_page": 167
+    },
+    {
+      "level": 2,
+      "title": "ЯРОСЛАВ СТЕЛЬМАХ",
+      "start_page": 167,
+      "end_page": 195
+    },
+    {
+      "level": 3,
+      "title": "Митькозавр із Юрківки, або Химера лісового озера (уривки)",
+      "start_page": 168,
+      "end_page": 195
+    },
+    {
+      "level": 2,
+      "title": "ЛЕСЯ ВОРОНИНА",
+      "start_page": 195,
+      "end_page": 227
+    },
+    {
+      "level": 3,
+      "title": "Таємне Товариство Боягузів, або Засіб від переляку № 9 (уривки)",
+      "start_page": 196,
+      "end_page": 227
+    },
+    {
+      "level": 2,
+      "title": "ЗІРКА МЕНЗАТЮК",
+      "start_page": 227,
+      "end_page": 261
+    },
+    {
+      "level": 3,
+      "title": "Ангел Золоте Волосся (уривки)",
+      "start_page": 228,
+      "end_page": 261
+    },
+    {
+      "level": 1,
+      "title": "ВІД СМІШНОГО ДО ВЕЛИКОГО",
+      "start_page": 263,
+      "end_page": 287
+    },
+    {
+      "level": 2,
+      "title": "СТЕПАН РУДАНСЬКИЙ",
+      "start_page": 265,
+      "end_page": 271
+    },
+    {
+      "level": 3,
+      "title": "Добре торгувалось",
+      "start_page": 266,
+      "end_page": 267
+    },
+    {
+      "level": 3,
+      "title": "Запорожці в короля",
+      "start_page": 267,
+      "end_page": 268
+    },
+    {
+      "level": 3,
+      "title": "Торбин брат",
+      "start_page": 268,
+      "end_page": 271
+    },
+    {
+      "level": 2,
+      "title": "ЛЕОНІД ГЛІБОВ",
+      "start_page": 271,
+      "end_page": 287
+    },
+    {
+      "level": 3,
+      "title": "Щука",
+      "start_page": 272,
+      "end_page": 287
+    }
+  ]
+}

@@ -1,0 +1,190 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "Розв’язування трикутників",
+      "start_page": 5,
+      "end_page": 50
+    },
+    {
+      "level": 2,
+      "title": "Синус, косинус і тангенс кута від 0° до 180°",
+      "start_page": 5,
+      "end_page": 11
+    },
+    {
+      "level": 2,
+      "title": "Теорема косинусів",
+      "start_page": 12,
+      "end_page": 20
+    },
+    {
+      "level": 2,
+      "title": "Теорема синусів",
+      "start_page": 21,
+      "end_page": 28
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування трикутників",
+      "start_page": 29,
+      "end_page": 34
+    },
+    {
+      "level": 3,
+      "title": "Тригонометрія — наука про вимірювання трикутників",
+      "start_page": 33,
+      "end_page": 34
+    },
+    {
+      "level": 2,
+      "title": "Формули для знаходження площі трикутника",
+      "start_page": 35,
+      "end_page": 46
+    },
+    {
+      "level": 3,
+      "title": "Зовнівписане коло трикутника",
+      "start_page": 44,
+      "end_page": 46
+    },
+    {
+      "level": 1,
+      "title": "Правильні многокутники",
+      "start_page": 51,
+      "end_page": 76
+    },
+    {
+      "level": 2,
+      "title": "Правильні многокутники та їхні властивості",
+      "start_page": 51,
+      "end_page": 59
+    },
+    {
+      "level": 3,
+      "title": "Про побудову правильних n-кутників",
+      "start_page": 60,
+      "end_page": 61
+    },
+    {
+      "level": 2,
+      "title": "Довжина кола. Площа круга",
+      "start_page": 62,
+      "end_page": 73
+    },
+    {
+      "level": 1,
+      "title": "Декартові координати на площині",
+      "start_page": 77,
+      "end_page": 105
+    },
+    {
+      "level": 2,
+      "title": "Відстань між двома точками із заданими координатами. Координати середини відрізка",
+      "start_page": 77,
+      "end_page": 82
+    },
+    {
+      "level": 2,
+      "title": "Рівняння фігури. Рівняння кола",
+      "start_page": 83,
+      "end_page": 88
+    },
+    {
+      "level": 2,
+      "title": "Рівняння прямої",
+      "start_page": 89,
+      "end_page": 94
+    },
+    {
+      "level": 2,
+      "title": "Кутовий коефіцієнт прямої",
+      "start_page": 95,
+      "end_page": 101
+    },
+    {
+      "level": 3,
+      "title": "Метод координат",
+      "start_page": 99,
+      "end_page": 100
+    },
+    {
+      "level": 1,
+      "title": "Вектори",
+      "start_page": 106,
+      "end_page": 156
+    },
+    {
+      "level": 2,
+      "title": "Поняття вектора",
+      "start_page": 106,
+      "end_page": 113
+    },
+    {
+      "level": 2,
+      "title": "Координати вектора",
+      "start_page": 114,
+      "end_page": 117
+    },
+    {
+      "level": 2,
+      "title": "Додавання і віднімання векторів",
+      "start_page": 118,
+      "end_page": 128
+    },
+    {
+      "level": 2,
+      "title": "Множення вектора на число",
+      "start_page": 129,
+      "end_page": 138
+    },
+    {
+      "level": 3,
+      "title": "Застосування векторів",
+      "start_page": 139,
+      "end_page": 140
+    },
+    {
+      "level": 2,
+      "title": "Скалярний добуток векторів",
+      "start_page": 141,
+      "end_page": 150
+    },
+    {
+      "level": 1,
+      "title": "Геометричні перетворення",
+      "start_page": 157,
+      "end_page": 208
+    },
+    {
+      "level": 2,
+      "title": "Рух (переміщення) фігури. Паралельне перенесення",
+      "start_page": 157,
+      "end_page": 166
+    },
+    {
+      "level": 2,
+      "title": "Осьова симетрія",
+      "start_page": 167,
+      "end_page": 174
+    },
+    {
+      "level": 2,
+      "title": "Центральна симетрія. Поворот",
+      "start_page": 175,
+      "end_page": 184
+    },
+    {
+      "level": 2,
+      "title": "Подібність фігур",
+      "start_page": 185,
+      "end_page": 199
+    },
+    {
+      "level": 3,
+      "title": "Застосування перетворень фігур при розв’язуванні задач",
+      "start_page": 200,
+      "end_page": 203
+    }
+  ]
+}

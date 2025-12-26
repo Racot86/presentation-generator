@@ -1,0 +1,682 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "«РОЗСТРІЛЯНЕ ВІДРОДЖЕННЯ»",
+      "start_page": 4,
+      "end_page": 9
+    },
+    {
+      "level": 2,
+      "title": "Українська література ХХ ст.",
+      "start_page": 4,
+      "end_page": 5
+    },
+    {
+      "level": 2,
+      "title": "«Розстріляне відродження»",
+      "start_page": 5,
+      "end_page": 9
+    },
+    {
+      "level": 1,
+      "title": "ЛІТЕРАТУРНИЙ АВАНГАРД",
+      "start_page": 10,
+      "end_page": 15
+    },
+    {
+      "level": 2,
+      "title": "Авангард. Футуризм",
+      "start_page": 10,
+      "end_page": 11
+    },
+    {
+      "level": 2,
+      "title": "Михайль Семенко",
+      "start_page": 11,
+      "end_page": 13
+    },
+    {
+      "level": 3,
+      "title": "Бажання",
+      "start_page": 13,
+      "end_page": 13
+    },
+    {
+      "level": 3,
+      "title": "Місто",
+      "start_page": 13,
+      "end_page": 14
+    },
+    {
+      "level": 3,
+      "title": "Запрошення",
+      "start_page": 14,
+      "end_page": 15
+    },
+    {
+      "level": 1,
+      "title": "ПОЕТИЧНЕ САМОВИРАЖЕННЯ",
+      "start_page": 16,
+      "end_page": 34
+    },
+    {
+      "level": 2,
+      "title": "Вітаїстичність",
+      "start_page": 16,
+      "end_page": 17
+    },
+    {
+      "level": 2,
+      "title": "Павло Тичина",
+      "start_page": 17,
+      "end_page": 19
+    },
+    {
+      "level": 3,
+      "title": "Кларнетизм",
+      "start_page": 19,
+      "end_page": 21
+    },
+    {
+      "level": 3,
+      "title": "«Ви знаєте, як липа шелестить...»",
+      "start_page": 21,
+      "end_page": 22
+    },
+    {
+      "level": 3,
+      "title": "«Арфами, арфами...»",
+      "start_page": 22,
+      "end_page": 23
+    },
+    {
+      "level": 3,
+      "title": "«О панно Інно!..»",
+      "start_page": 23,
+      "end_page": 25
+    },
+    {
+      "level": 3,
+      "title": "«Одчиняйте двері...»",
+      "start_page": 25,
+      "end_page": 26
+    },
+    {
+      "level": 3,
+      "title": "Експресіонізм",
+      "start_page": 26,
+      "end_page": 26
+    },
+    {
+      "level": 3,
+      "title": "Пам’яті тридцяти",
+      "start_page": 26,
+      "end_page": 29
+    },
+    {
+      "level": 2,
+      "title": "Євген Плужник",
+      "start_page": 29,
+      "end_page": 31
+    },
+    {
+      "level": 3,
+      "title": "«Вчись у природи творчого спокою...",
+      "start_page": 31,
+      "end_page": 31
+    },
+    {
+      "level": 3,
+      "title": "Ліричний герой",
+      "start_page": 32,
+      "end_page": 32
+    },
+    {
+      "level": 3,
+      "title": "«Ніч... а човен — як срібний птах!..»",
+      "start_page": 32,
+      "end_page": 34
+    },
+    {
+      "level": 1,
+      "title": "«КИЇВСЬКІ НЕОКЛАСИКИ»",
+      "start_page": 35,
+      "end_page": 42
+    },
+    {
+      "level": 2,
+      "title": "Неокласицизм",
+      "start_page": 36,
+      "end_page": 37
+    },
+    {
+      "level": 2,
+      "title": "Максим Рильський",
+      "start_page": 37,
+      "end_page": 39
+    },
+    {
+      "level": 3,
+      "title": "«Солодкий світ!..»",
+      "start_page": 39,
+      "end_page": 40
+    },
+    {
+      "level": 3,
+      "title": "Сонет",
+      "start_page": 40,
+      "end_page": 40
+    },
+    {
+      "level": 3,
+      "title": "У теплі дні збирання винограду...",
+      "start_page": 40,
+      "end_page": 41
+    },
+    {
+      "level": 3,
+      "title": "Філософічність",
+      "start_page": 41,
+      "end_page": 42
+    },
+    {
+      "level": 1,
+      "title": "ПРОЗОВЕ РОЗМАЇТТЯ",
+      "start_page": 43,
+      "end_page": 114
+    },
+    {
+      "level": 2,
+      "title": "Проза 20–30-х років ХХ ст.",
+      "start_page": 43,
+      "end_page": 45
+    },
+    {
+      "level": 2,
+      "title": "Микола Хвильовий",
+      "start_page": 45,
+      "end_page": 50
+    },
+    {
+      "level": 3,
+      "title": "Я (Романтика)",
+      "start_page": 50,
+      "end_page": 64
+    },
+    {
+      "level": 2,
+      "title": "Юрій Яновський",
+      "start_page": 64,
+      "end_page": 69
+    },
+    {
+      "level": 3,
+      "title": "Умовність зображення. Художній час і простір",
+      "start_page": 69,
+      "end_page": 74
+    },
+    {
+      "level": 3,
+      "title": "Майстер корабля (Уривки)",
+      "start_page": 74,
+      "end_page": 85
+    },
+    {
+      "level": 2,
+      "title": "Валер’ян Підмогильний",
+      "start_page": 85,
+      "end_page": 88
+    },
+    {
+      "level": 3,
+      "title": "Урбаністичний роман",
+      "start_page": 88,
+      "end_page": 93
+    },
+    {
+      "level": 3,
+      "title": "Місто (Уривок)",
+      "start_page": 93,
+      "end_page": 97
+    },
+    {
+      "level": 2,
+      "title": "Остап Вишня",
+      "start_page": 97,
+      "end_page": 101
+    },
+    {
+      "level": 3,
+      "title": "Усмішка. Фейлетон",
+      "start_page": 101,
+      "end_page": 104
+    },
+    {
+      "level": 3,
+      "title": "Моя автобіографія (Скорочено)",
+      "start_page": 104,
+      "end_page": 108
+    },
+    {
+      "level": 3,
+      "title": "Сом",
+      "start_page": 108,
+      "end_page": 112
+    },
+    {
+      "level": 3,
+      "title": "Письменники (Скорочено)",
+      "start_page": 112,
+      "end_page": 114
+    },
+    {
+      "level": 1,
+      "title": "МОДЕРНА ДРАМАТУРГІЯ",
+      "start_page": 115,
+      "end_page": 131
+    },
+    {
+      "level": 2,
+      "title": "Національний театр і драматургія",
+      "start_page": 115,
+      "end_page": 117
+    },
+    {
+      "level": 2,
+      "title": "Микола Куліш",
+      "start_page": 117,
+      "end_page": 121
+    },
+    {
+      "level": 3,
+      "title": "Сатирична комедія",
+      "start_page": 121,
+      "end_page": 127
+    },
+    {
+      "level": 3,
+      "title": "Мина Мазайло (Уривок)",
+      "start_page": 127,
+      "end_page": 131
+    },
+    {
+      "level": 1,
+      "title": "ПЕРЛИНИ ЗАХІДНОУКРАЇНСЬКОЇ ЛІТЕРАТУРИ",
+      "start_page": 132,
+      "end_page": 150
+    },
+    {
+      "level": 2,
+      "title": "Розвиток літератури в Західній Україні (до 1939 р.)",
+      "start_page": 132,
+      "end_page": 134
+    },
+    {
+      "level": 2,
+      "title": "Богдан-Ігор Антонич",
+      "start_page": 134,
+      "end_page": 135
+    },
+    {
+      "level": 3,
+      "title": "Асоціативність. Міфологізм",
+      "start_page": 135,
+      "end_page": 137
+    },
+    {
+      "level": 3,
+      "title": "Різдво",
+      "start_page": 137,
+      "end_page": 137
+    },
+    {
+      "level": 3,
+      "title": "Коляда",
+      "start_page": 137,
+      "end_page": 138
+    },
+    {
+      "level": 3,
+      "title": "Зелена Євангелія",
+      "start_page": 138,
+      "end_page": 140
+    },
+    {
+      "level": 2,
+      "title": "Осип Турянський",
+      "start_page": 140,
+      "end_page": 142
+    },
+    {
+      "level": 3,
+      "title": "Поема в прозі",
+      "start_page": 142,
+      "end_page": 145
+    },
+    {
+      "level": 3,
+      "title": "Поза межами болю (Уривок)",
+      "start_page": 145,
+      "end_page": 150
+    },
+    {
+      "level": 1,
+      "title": "«ПІД ЧУЖИМ НЕБОМ»",
+      "start_page": 151,
+      "end_page": 163
+    },
+    {
+      "level": 2,
+      "title": "Література письменників-емігрантів. «Празька школа» української поезії",
+      "start_page": 151,
+      "end_page": 153
+    },
+    {
+      "level": 2,
+      "title": "Євген Маланюк",
+      "start_page": 153,
+      "end_page": 154
+    },
+    {
+      "level": 3,
+      "title": "Уривок з поеми",
+      "start_page": 154,
+      "end_page": 156
+    },
+    {
+      "level": 3,
+      "title": "Напис на книзі віршів",
+      "start_page": 156,
+      "end_page": 159
+    },
+    {
+      "level": 2,
+      "title": "Іван Багряний",
+      "start_page": 159,
+      "end_page": 162
+    },
+    {
+      "level": 3,
+      "title": "Пригодницький роман",
+      "start_page": 162,
+      "end_page": 163
+    },
+    {
+      "level": 1,
+      "title": "ВОЄННЕ ЛИХОЛІТТЯ",
+      "start_page": 164,
+      "end_page": 187
+    },
+    {
+      "level": 2,
+      "title": "Українська література 40–50-х років ХХ ст.",
+      "start_page": 164,
+      "end_page": 165
+    },
+    {
+      "level": 2,
+      "title": "Олександр Довженко",
+      "start_page": 165,
+      "end_page": 167
+    },
+    {
+      "level": 3,
+      "title": "Публіцистичність",
+      "start_page": 167,
+      "end_page": 168
+    },
+    {
+      "level": 3,
+      "title": "Кіноповість",
+      "start_page": 168,
+      "end_page": 172
+    },
+    {
+      "level": 3,
+      "title": "Зачарована Десна (Уривок)",
+      "start_page": 172,
+      "end_page": 178
+    },
+    {
+      "level": 2,
+      "title": "Олесь Гончар",
+      "start_page": 178,
+      "end_page": 180
+    },
+    {
+      "level": 3,
+      "title": "Новела",
+      "start_page": 180,
+      "end_page": 182
+    },
+    {
+      "level": 3,
+      "title": "Модри Камень",
+      "start_page": 182,
+      "end_page": 187
+    },
+    {
+      "level": 1,
+      "title": "ЛІТЕРАТУРНЕ ШІСТДЕСЯТНИЦТВО",
+      "start_page": 188,
+      "end_page": 208
+    },
+    {
+      "level": 2,
+      "title": "Українська література на початку 60-х років ХХ ст.",
+      "start_page": 188,
+      "end_page": 190
+    },
+    {
+      "level": 2,
+      "title": "Василь Симоненко",
+      "start_page": 190,
+      "end_page": 192
+    },
+    {
+      "level": 3,
+      "title": "«Задивляюсь у твої зіниці...»",
+      "start_page": 190,
+      "end_page": 191
+    },
+    {
+      "level": 3,
+      "title": "Я...",
+      "start_page": 191,
+      "end_page": 192
+    },
+    {
+      "level": 3,
+      "title": "Віршові розміри",
+      "start_page": 192,
+      "end_page": 194
+    },
+    {
+      "level": 2,
+      "title": "Дмитро Павличко",
+      "start_page": 194,
+      "end_page": 197
+    },
+    {
+      "level": 3,
+      "title": "Два кольори",
+      "start_page": 195,
+      "end_page": 195
+    },
+    {
+      "level": 3,
+      "title": "«Я стужився, мила, за тобою...»",
+      "start_page": 195,
+      "end_page": 197
+    },
+    {
+      "level": 2,
+      "title": "Іван Драч",
+      "start_page": 197,
+      "end_page": 199
+    },
+    {
+      "level": 3,
+      "title": "Балада про соняшник",
+      "start_page": 198,
+      "end_page": 199
+    },
+    {
+      "level": 3,
+      "title": "Балада",
+      "start_page": 199,
+      "end_page": 200
+    },
+    {
+      "level": 2,
+      "title": "Микола Вінграновський",
+      "start_page": 200,
+      "end_page": 203
+    },
+    {
+      "level": 3,
+      "title": "«У синьому небі я висіяв ліс...»",
+      "start_page": 201,
+      "end_page": 203
+    },
+    {
+      "level": 2,
+      "title": "Григір Тютюнник",
+      "start_page": 203,
+      "end_page": 205
+    },
+    {
+      "level": 3,
+      "title": "Художня деталь",
+      "start_page": 205,
+      "end_page": 206
+    },
+    {
+      "level": 3,
+      "title": "Три зозулі з поклоном",
+      "start_page": 206,
+      "end_page": 208
+    },
+    {
+      "level": 1,
+      "title": "МИТЕЦЬ І СУСПІЛЬСТВО",
+      "start_page": 209,
+      "end_page": 233
+    },
+    {
+      "level": 2,
+      "title": "Ліна Костенко",
+      "start_page": 209,
+      "end_page": 216
+    },
+    {
+      "level": 3,
+      "title": "«Страшні слова, коли вони мовчать...»",
+      "start_page": 211,
+      "end_page": 212
+    },
+    {
+      "level": 3,
+      "title": "«Хай буде легко. Дотиком пера...»",
+      "start_page": 212,
+      "end_page": 213
+    },
+    {
+      "level": 3,
+      "title": "«Недумано, негадано...»",
+      "start_page": 213,
+      "end_page": 214
+    },
+    {
+      "level": 3,
+      "title": "«По сей день Посейдон посідає свій трон...»",
+      "start_page": 214,
+      "end_page": 216
+    },
+    {
+      "level": 3,
+      "title": "Роман у віршах",
+      "start_page": 216,
+      "end_page": 222
+    },
+    {
+      "level": 3,
+      "title": "Маруся Чурай (Уривки)",
+      "start_page": 222,
+      "end_page": 233
+    },
+    {
+      "level": 1,
+      "title": "СТОЇЧНА УКРАЇНСЬКА ПОЕЗІЯ",
+      "start_page": 234,
+      "end_page": 238
+    },
+    {
+      "level": 2,
+      "title": "Василь Стус",
+      "start_page": 234,
+      "end_page": 236
+    },
+    {
+      "level": 3,
+      "title": "Екзистенційні ідеї в художньому творі",
+      "start_page": 236,
+      "end_page": 236
+    },
+    {
+      "level": 3,
+      "title": "«Крізь сотні сумнівів я йду до тебе...»",
+      "start_page": 236,
+      "end_page": 237
+    },
+    {
+      "level": 3,
+      "title": "«Господи, гніву пречистого...»",
+      "start_page": 237,
+      "end_page": 238
+    },
+    {
+      "level": 1,
+      "title": "СУЧАСНА УКРАЇНСЬКА ЛІТЕРАТУРА",
+      "start_page": 239,
+      "end_page": 248
+    },
+    {
+      "level": 2,
+      "title": "Література масова й елітарна. Постмодернізм",
+      "start_page": 240,
+      "end_page": 241
+    },
+    {
+      "level": 2,
+      "title": "Юрій Андрухович",
+      "start_page": 241,
+      "end_page": 243
+    },
+    {
+      "level": 3,
+      "title": "Пісня мандрівного спудея",
+      "start_page": 241,
+      "end_page": 242
+    },
+    {
+      "level": 3,
+      "title": "Астролог",
+      "start_page": 242,
+      "end_page": 243
+    },
+    {
+      "level": 2,
+      "title": "Галина Пагутяк",
+      "start_page": 243,
+      "end_page": 249
+    },
+    {
+      "level": 3,
+      "title": "Потрапити в сад",
+      "start_page": 244,
+      "end_page": 248
+    }
+  ]
+}

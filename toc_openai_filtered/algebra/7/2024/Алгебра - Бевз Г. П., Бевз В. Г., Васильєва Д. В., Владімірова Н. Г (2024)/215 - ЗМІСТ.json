@@ -1,0 +1,220 @@
+{
+  "toc": [
+    {
+      "level": 1,
+      "title": "ЦІЛІ ВИРАЗИ",
+      "start_page": 6,
+      "end_page": 75
+    },
+    {
+      "level": 2,
+      "title": "Вирази зі змінними",
+      "start_page": 7,
+      "end_page": 12
+    },
+    {
+      "level": 2,
+      "title": "Тотожні вирази",
+      "start_page": 13,
+      "end_page": 19
+    },
+    {
+      "level": 2,
+      "title": "Вирази зі степенями",
+      "start_page": 20,
+      "end_page": 28
+    },
+    {
+      "level": 2,
+      "title": "Властивості степенів",
+      "start_page": 29,
+      "end_page": 36
+    },
+    {
+      "level": 2,
+      "title": "Одночлени",
+      "start_page": 37,
+      "end_page": 46
+    },
+    {
+      "level": 2,
+      "title": "Многочлени",
+      "start_page": 47,
+      "end_page": 52
+    },
+    {
+      "level": 2,
+      "title": "Додавання і віднімання многочленів",
+      "start_page": 53,
+      "end_page": 59
+    },
+    {
+      "level": 2,
+      "title": "Множення многочлена на одночлен",
+      "start_page": 60,
+      "end_page": 66
+    },
+    {
+      "level": 2,
+      "title": "Множення многочленів",
+      "start_page": 67,
+      "end_page": 75
+    },
+    {
+      "level": 1,
+      "title": "РОЗКЛАДАННЯ МНОГОЧЛЕНІВ НА МНОЖНИКИ",
+      "start_page": 76,
+      "end_page": 118
+    },
+    {
+      "level": 2,
+      "title": "Винеcення cпільного множника за дужки",
+      "start_page": 77,
+      "end_page": 82
+    },
+    {
+      "level": 2,
+      "title": "Спосіб групування",
+      "start_page": 83,
+      "end_page": 87
+    },
+    {
+      "level": 2,
+      "title": "Квадрат двочлена",
+      "start_page": 88,
+      "end_page": 94
+    },
+    {
+      "level": 2,
+      "title": "Різниця квадратів",
+      "start_page": 95,
+      "end_page": 104
+    },
+    {
+      "level": 2,
+      "title": "Різниця і сума кубів",
+      "start_page": 105,
+      "end_page": 109
+    },
+    {
+      "level": 2,
+      "title": "Застосування різних способів розкладання многочленів на множники",
+      "start_page": 110,
+      "end_page": 118
+    },
+    {
+      "level": 1,
+      "title": "ФУНКЦІЯ",
+      "start_page": 119,
+      "end_page": 152
+    },
+    {
+      "level": 2,
+      "title": "Що таке функція?",
+      "start_page": 120,
+      "end_page": 128
+    },
+    {
+      "level": 2,
+      "title": "Графік функції",
+      "start_page": 129,
+      "end_page": 139
+    },
+    {
+      "level": 2,
+      "title": "Лінійна функція",
+      "start_page": 140,
+      "end_page": 152
+    },
+    {
+      "level": 1,
+      "title": "ЛІНІЙНІ РІВНЯННЯ ТА ЇХ СИСТЕМИ",
+      "start_page": 153,
+      "end_page": 229
+    },
+    {
+      "level": 2,
+      "title": "Загальні відомості про рівняння",
+      "start_page": 154,
+      "end_page": 161
+    },
+    {
+      "level": 2,
+      "title": "Лінійні рівняння",
+      "start_page": 162,
+      "end_page": 168
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач за допомогою рівнянь",
+      "start_page": 169,
+      "end_page": 183
+    },
+    {
+      "level": 2,
+      "title": "Рівняння з двома змінними",
+      "start_page": 184,
+      "end_page": 189
+    },
+    {
+      "level": 2,
+      "title": "Графік лінійного рівняння з двома змінними",
+      "start_page": 190,
+      "end_page": 197
+    },
+    {
+      "level": 2,
+      "title": "Системи рівнянь",
+      "start_page": 198,
+      "end_page": 203
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування систем лінійних рівнянь методом підстановки",
+      "start_page": 204,
+      "end_page": 209
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування систем лінійних рівнянь методом додавання",
+      "start_page": 210,
+      "end_page": 217
+    },
+    {
+      "level": 2,
+      "title": "Розв’язування задач складанням системи рівнянь",
+      "start_page": 218,
+      "end_page": 229
+    },
+    {
+      "level": 1,
+      "title": "СТОХАСТИКА",
+      "start_page": 230,
+      "end_page": 258
+    },
+    {
+      "level": 2,
+      "title": "Відсоткові розрахунки",
+      "start_page": 231,
+      "end_page": 238
+    },
+    {
+      "level": 2,
+      "title": "Збір та аналіз даних",
+      "start_page": 239,
+      "end_page": 245
+    },
+    {
+      "level": 2,
+      "title": "Комбінаторні задачі",
+      "start_page": 246,
+      "end_page": 250
+    },
+    {
+      "level": 2,
+      "title": "Поняття ймовірності. Ймовірність неможливої, достовірної та випадкової події",
+      "start_page": 251,
+      "end_page": 258
+    }
+  ]
+}
