@@ -21,8 +21,58 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
+import os
+from pathlib import Path
 
 from gemini_utils import generate_text
+
+# -----------------------------
+# Pre-run filename shortening
+# -----------------------------
+def _shorten_toc_filenames_if_needed() -> None:
+    """Shorten overly long filenames inside toc_openai_filtered/ before processing.
+
+    This prevents filesystem errors like "File name too long" that may appear
+    when creating directories based on long book titles. The operation is
+    idempotent: if no renames are needed, it does nothing.
+
+    Controlled by env var SHORTEN_TOC (default: enabled). Set SHORTEN_TOC=0 to disable.
+    """
+    try:
+        if os.getenv("SHORTEN_TOC", "1").strip() in {"0", "false", "False", "no", "NO"}:
+            print("[shorten] Skipped (SHORTEN_TOC disabled)")
+            return
+
+        # Import locally to avoid import cost unless needed by this script
+        try:
+            from tools.shorten_filenames import plan_renames, apply_renames, write_mapping  # type: ignore
+        except Exception:
+            # Also support alternate location if the tool was placed at project root
+            try:
+                # type: ignore
+                from shorten_filenames import plan_renames, apply_renames, write_mapping  # type: ignore
+            except Exception as e:
+                print(f"[shorten] WARN: Could not import shortening utility: {e}")
+                return
+
+        root = Path("toc_openai_filtered")
+        if not root.exists():
+            print(f"[shorten] Root not found, skipping: {root}")
+            return
+
+        renames = plan_renames(root)
+        if not renames:
+            print("[shorten] No renames needed.")
+            return
+
+        applied = apply_renames(renames)
+        print(f"[shorten] Applied renames: {len(applied)}/{len(renames)}")
+        if applied:
+            mapping_path = write_mapping(applied, Path.cwd())
+            print(f"[shorten] Mapping written to: {mapping_path}")
+    except Exception as e:
+        # Do not fail the whole generation because of shortening errors
+        print(f"[shorten] WARN: Shortening step failed: {e}")
 
 # Suppress warnings
 warnings.filterwarnings("ignore", category=UserWarning)
@@ -947,6 +997,9 @@ def process_toc_file(json_path: Path, output_root: Path) -> Tuple[int, int]:
 
 def main():
     """Main function to process all TOC JSON files."""
+    # Ensure filenames under toc_openai_filtered are safe/short enough
+    _shorten_toc_filenames_if_needed()
+
     if not TOC_ROOT.exists():
         print(f"❌ TOC directory not found: {TOC_ROOT}")
         sys.exit(1)
