@@ -1,11 +1,11 @@
 #!/usr/bin/env python3
 """
-Generate educational presentations from table of contents JSON files using Gemini 3 Image Preview.
+Generate educational presentations from table of contents JSON files using Gemini on Vertex AI.
 
 For each JSON file in toc_openai_filtered/:
 1. Extracts topics and subtopics from the filtered TOC
 2. Sends requests to Gemini to generate presentation text (fact-based only)
-3. Uses Gemini 3 Image Preview to generate slide images directly from presentation text
+3. Uses Gemini on Vertex AI to generate slide images directly from presentation text
 4. Converts slide images to PDF
 5. Saves generated presentations to generated_presentations/{subject}/{form}/
 """
@@ -21,10 +21,6 @@ import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Tuple
-import os
-from pathlib import Path
-
-from gemini_utils import generate_text
 
 # -----------------------------
 # Pre-run filename shortening
@@ -83,7 +79,8 @@ OUTPUT_ROOT = PROJECT_ROOT / "generated_presentations"
 
 MAX_API_RETRIES = 3
 API_RETRY_BASE_DELAY = 3.0  # seconds
-GEMINI_MODEL = "gemini-2.0-flash"
+GEMINI_MODEL = os.environ.get("VERTEX_TEXT_MODEL", "gemini-2.0-flash")
+VERTEX_IMAGE_MODEL = os.environ.get("VERTEX_IMAGE_MODEL", "gemini-3-pro-image-preview")
 NUM_WORKERS = int(os.environ.get("PRESENTATION_WORKERS", "3"))  # Number of parallel workers
 
 # Remote image generation size (server-side). Smaller sizes are faster and cheaper.
@@ -124,18 +121,30 @@ def _load_env_file(env_path: Path) -> Dict[str, str]:
     return env
 
 
-def get_gemini_api_key() -> Optional[str]:
-    """Get Gemini API key from environment or .env file."""
-    # 1) From actual environment
-    key = os.environ.get("GEMINI_API_KEY") or os.environ.get("VERTEX_AI_KEY") or os.environ.get("VERTEX_AI_API_KEY")
-    if key:
-        return key.strip()
-    
-    # 2) From .env file
+def _load_vertex_env_defaults() -> Tuple[str, str]:
+    """Load project/region from .env if not present in the environment."""
     env_path = (PROJECT_ROOT / ".env").resolve()
     env_map = _load_env_file(env_path)
-    key = env_map.get("GEMINI_API_KEY") or env_map.get("VERTEX_AI_KEY") or env_map.get("VERTEX_AI_API_KEY")
-    return key.strip() if key else None
+    for key in ("GOOGLE_CLOUD_PROJECT", "GOOGLE_CLOUD_REGION"):
+        if key not in os.environ and key in env_map:
+            os.environ[key] = env_map[key]
+    project = os.environ.get("GOOGLE_CLOUD_PROJECT", "long-grin-481614-s3")
+    region = os.environ.get("GOOGLE_CLOUD_REGION", "global")
+    return project, region
+
+
+def _init_vertex_genai_client() -> Tuple[Any, Any]:
+    """Initialize google-genai client for Vertex AI."""
+    project, region = _load_vertex_env_defaults()
+    try:
+        from google import genai  # type: ignore
+        from google.genai import types  # type: ignore
+    except Exception as e:
+        raise RuntimeError(
+            f"Required library not installed: {e}. Install with: pip install google-genai"
+        )
+    client = genai.Client(vertexai=True, project=project, location=region)
+    return client, types
 
 
 def generate_presentation_with_gemini(
@@ -145,9 +154,9 @@ def generate_presentation_with_gemini(
     form: int,
 ) -> Tuple[bool, Optional[bytes]]:
     """
-    Generate graphical PDF presentation using Gemini 3 Image Preview.
+    Generate graphical PDF presentation using Gemini on Vertex AI.
     
-    Uses Gemini 3 Image Preview to generate graphical presentation slides with images and visual elements,
+    Uses Gemini on Vertex AI to generate graphical presentation slides with images and visual elements,
     then converts to PDF.
     
     Args:
@@ -159,13 +168,8 @@ def generate_presentation_with_gemini(
     Returns:
         (ok, pdf_bytes_or_error)
     """
-    api_key = get_gemini_api_key()
-    if not api_key:
-        return False, "GEMINI_API_KEY not found. Set it in your environment or .env file."
-    
     try:
         import io
-        import base64
         import tempfile
         from pathlib import Path as PathLib
         from reportlab.lib.pagesizes import A4, landscape
@@ -226,7 +230,7 @@ def generate_presentation_with_gemini(
             
             if is_new_section and current_slide_content and len(current_slide_content) >= 2:
                 # Create slide from accumulated content
-                slide_title = current_slide_content[0][:100] if current_slide_content else f"Slide {slide_num}"
+                slide_title = current_slide_content[0][:100] if current_slide_content else topic_title
                 slide_content = current_slide_content[1:4] if len(current_slide_content) > 1 else current_slide_content
                 slides.append({
                     "title": slide_title,
@@ -244,14 +248,14 @@ def generate_presentation_with_gemini(
         
         # Add remaining content as last slide
         if current_slide_content:
-            slide_title = current_slide_content[0][:100] if current_slide_content else f"Slide {slide_num}"
+            slide_title = current_slide_content[0][:100] if current_slide_content else topic_title
             slide_content = current_slide_content[1:4] if len(current_slide_content) > 1 else current_slide_content
             slides.append({
                 "title": slide_title,
                 "content": slide_content[:4],  # Already a list
                 "image_prompt": ""
             })
-        
+
         # Ensure we have at least one slide
         if not slides:
             # Fallback: create one slide with the entire text
@@ -260,30 +264,28 @@ def generate_presentation_with_gemini(
                 "content": [presentation_text[:500]],
                 "image_prompt": ""
             }]
+
+        # Remove accidental duplicate cover/title slide from content slides
+        topic_norm = re.sub(r"\s+", " ", topic_title.strip().lower())
+        cleaned_slides = []
+        for s in slides:
+            title_raw = str(s.get("title", "")).strip()
+            title_norm = re.sub(r"\s+", " ", title_raw.lower())
+            content_list = s.get("content", [])
+            # If a slide looks like a cover (title matches topic and no real content), skip it
+            if title_norm == topic_norm and len([c for c in content_list if c.strip()]) <= 1:
+                continue
+            cleaned_slides.append(s)
+        slides = cleaned_slides
         
-        # Step 2: Generate complete slide images using Gemini 3 Image Preview
-        # Use regular API with API key (no vertexai=True) - this is the working approach
+        # Step 2: Generate complete slide images using Gemini on Vertex AI
         try:
-            from google import genai
-            from google.genai import types
-            
-            api_key = get_gemini_api_key()
-            if not api_key:
-                return False, (
-                    "GEMINI_API_KEY or VERTEX_AI_KEY not found. Set it in your environment or .env file."
-                )
-            
-            # Use regular API (no vertexai=True) - this works!
-            client = genai.Client(api_key=api_key)
-            model_id = "gemini-3-pro-image-preview"  # Regular API model ID format
-            
+            client, types = _init_vertex_genai_client()
+            model_id = VERTEX_IMAGE_MODEL
             with print_lock:
-                print(f"    ✓ Using Gemini 3 Image Preview with API key (regular API)")
-                
-        except ImportError as e:
-            return False, f"Required library not installed: {e}. Install with: pip install google-genai"
+                print(f"    ✓ Using Vertex AI Gemini Image model: {model_id}")
         except Exception as e:
-            return False, f"Failed to initialize Gemini client: {e}"
+            return False, f"Failed to initialize Vertex Gemini client: {e}"
         
         # Generate title slide image
         temp_dir = PathLib(tempfile.mkdtemp())
@@ -323,11 +325,15 @@ def generate_presentation_with_gemini(
         # Generate title slide using Gemini 3 Image Preview
         # STRICTLY enforce subject theme and language
         title_slide_prompt = (
-            f"Create a high-quality educational presentation title slide. "
+            f"Create a high-quality educational presentation cover slide. "
             f"VISUALS: {subject_theme} STRICTLY follow this theme - do not mix themes from other subjects. "
             f"LAYOUT: Modern, clean, readable font, high contrast. "
-            f"TEXT: Render ONLY the topic title '{topic_title}' in {text_language}. "
-            f"Do NOT add subject name, grade/class number, or any UI labels like 'header', 'headline', 'title', 'body'. "
+            f"TEXT: Render ONLY the title '{topic_title}' in {text_language}. "
+            f"Do NOT add grade/class number. Do NOT add words like Slide/Слайд or any numbering. "
+            f"Do NOT add any UI labels like 'header', 'headline', 'title', 'body'. "
+            f"Do NOT render the words 'title slide' or any equivalent. "
+            f"Do NOT use markdown or list markers (#, ##, *, -, 1.). "
+            f"Do NOT render JSON keys or labels like name/subject. "
             f"All visible text must be {text_language} and legible on the background. "
             f"Theme MUST be strictly {subject} themed - no mixing with other subjects."
         )
@@ -340,16 +346,16 @@ def generate_presentation_with_gemini(
                 model=model_id,
                 contents=title_slide_prompt,
                 config=types.GenerateContentConfig(
-                    response_modalities=['IMAGE'],
+                    response_modalities=["IMAGE", "TEXT"],
                     image_config=types.ImageConfig(
-                        aspect_ratio="4:3",  # A4 landscape aspect ratio (closest to 1.414:1)
-                        image_size=IMAGE_REQUEST_SIZE,
+                        aspect_ratio="16:9",
+                        image_size="2K",
                     ),
                 ),
             )
             
             # Check response with better error handling
-            if not response.candidates or response.candidates[0].finish_reason != "STOP":
+            if not response.candidates or response.candidates[0].finish_reason != types.FinishReason.STOP:
                 reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
                 with print_lock:
                     print(f"      ⚠️  Title slide generation stopped: {reason}")
@@ -406,12 +412,21 @@ def generate_presentation_with_gemini(
         
         # Generate content slide images
         for idx, slide in enumerate(slides, 1):
-            slide_title = slide.get("title", f"Слайд {idx}")
+            slide_title = slide.get("title", topic_title)
             slide_content = slide.get("content", [])
             image_prompt = slide.get("image_prompt", "")
             
             # Format content text
-            content = " ".join([f"- {item}" for item in slide_content if item.strip()])
+            def _clean_text(raw: str) -> str:
+                text = raw.strip()
+                text = re.sub(r"^\s*(#+|\*+|-+|\d+[\.\)])\s*", "", text)
+                text = re.sub(r"\s+", " ", text).strip()
+                return text
+
+            content = " ".join(
+                [f"• {_clean_text(item)}" for item in slide_content if item.strip()]
+            )
+            slide_title = _clean_text(slide_title)
             
             # Create prompt for complete slide with text embedded
             # STRICTLY enforce subject theme and language
@@ -424,6 +439,9 @@ def generate_presentation_with_gemini(
                     f"LAYOUT: Modern, clean, readable font, high contrast. "
                     f"TEXT: Render ONLY this content in {text_language}, with no labels or UI words like 'headline', 'header', 'body', 'title': "
                     f"Title: '{slide_title}'. Body: '{content}'. "
+                    f"Do NOT include words Slide/Слайд or any numbering. "
+                    f"Do NOT use markdown or list markers (#, ##, *, -, 1.). "
+                    f"Do NOT render JSON keys or labels like name/subject. "
                     f"Do NOT show subject name or grade/class number anywhere. "
                     f"Theme MUST be strictly {subject} themed - no mixing with other subjects."
                 )
@@ -435,6 +453,9 @@ def generate_presentation_with_gemini(
                     f"LAYOUT: Modern, clean, readable font, high contrast. "
                     f"TEXT: Render ONLY this content in {text_language}, with no labels or UI words like 'headline', 'header', 'body', 'title': "
                     f"Title: '{slide_title}'. Body: '{content}'. "
+                    f"Do NOT include words Slide/Слайд or any numbering. "
+                    f"Do NOT use markdown or list markers (#, ##, *, -, 1.). "
+                    f"Do NOT render JSON keys or labels like name/subject. "
                     f"Do NOT show subject name or grade/class number anywhere. "
                     f"CRITICAL: All text MUST be in {text_language} language. Ensure spelling is correct and text is legible on the background. "
                     f"Theme MUST be strictly {subject} themed - no mixing with other subjects."
@@ -448,16 +469,16 @@ def generate_presentation_with_gemini(
                     model=model_id,
                     contents=slide_prompt,
                     config=types.GenerateContentConfig(
-                        response_modalities=['IMAGE'],
+                        response_modalities=["IMAGE", "TEXT"],
                         image_config=types.ImageConfig(
-                            aspect_ratio="4:3",  # A4 landscape aspect ratio (closest to 1.414:1)
-                            image_size=IMAGE_REQUEST_SIZE,
+                            aspect_ratio="16:9",
+                            image_size="2K",
                         ),
                     ),
                 )
                 
                 # Check response with better error handling
-                if not response.candidates or response.candidates[0].finish_reason != "STOP":
+                if not response.candidates or response.candidates[0].finish_reason != types.FinishReason.STOP:
                     reason = response.candidates[0].finish_reason if response.candidates else "Unknown"
                     with print_lock:
                         print(f"      ⚠️  Slide {idx} generation stopped: {reason}")
@@ -746,22 +767,20 @@ def generate_presentation_text_for_topic(
     form: int,
     context: Optional[str] = None,
 ) -> Tuple[bool, Optional[str]]:
-    """Generate presentation text for a topic using Gemini API."""
+    """Generate presentation text for a topic using Gemini on Vertex AI."""
     prompt = build_presentation_prompt(topic_title, subject, form, context)
     
     for attempt in range(MAX_API_RETRIES):
         try:
-            ok, response_text = generate_text(
-                prompt=prompt,
+            client, types = _init_vertex_genai_client()
+            response = client.models.generate_content(
                 model=GEMINI_MODEL,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_modalities=["TEXT"],
+                ),
             )
-            
-            if not ok:
-                if attempt < MAX_API_RETRIES - 1:
-                    time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
-                    continue
-                return False, f"API error: {response_text}"
-            
+            response_text = getattr(response, "text", None) or str(response)
             if not response_text or not response_text.strip():
                 if attempt < MAX_API_RETRIES - 1:
                     time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
@@ -1014,15 +1033,13 @@ def main():
     print(f"Found {len(json_files)} JSON files to process")
     print(f"Output directory: {OUTPUT_ROOT}")
     print(f"Using Gemini model: {GEMINI_MODEL}")
+    print(f"Using Vertex image model: {VERTEX_IMAGE_MODEL}")
     print(f"Number of parallel workers: {NUM_WORKERS}")
     
-    # Check if Gemini API key is set
-    if not get_gemini_api_key():
-        print("⚠️  Warning: GEMINI_API_KEY not found. Set it in your environment or .env file.")
-        print("   The script will fail when trying to generate PDFs.")
-        print("   You can also use VERTEX_AI_KEY as a fallback.")
-    else:
-        print("✓ Gemini API key found")
+    # Validate Vertex config early
+    project, region = _load_vertex_env_defaults()
+    print(f"Vertex project: {project}")
+    print(f"Vertex region: {region}")
     
     total_success = 0
     total_skip = 0
@@ -1042,5 +1059,3 @@ def main():
 
 if __name__ == "__main__":
     main()
-
-
