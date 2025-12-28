@@ -267,13 +267,22 @@ def generate_presentation_with_gemini(
 
         # Remove accidental duplicate cover/title slide from content slides
         topic_norm = re.sub(r"\s+", " ", topic_title.strip().lower())
+        subject_norm = re.sub(r"\s+", " ", subject.strip().lower())
+        form_token = str(form).strip()
         cleaned_slides = []
         for s in slides:
             title_raw = str(s.get("title", "")).strip()
             title_norm = re.sub(r"\s+", " ", title_raw.lower())
-            content_list = s.get("content", [])
-            # If a slide looks like a cover (title matches topic and no real content), skip it
-            if title_norm == topic_norm and len([c for c in content_list if c.strip()]) <= 1:
+            content_list = [c for c in s.get("content", []) if isinstance(c, str)]
+            content_join = " ".join(content_list).lower()
+            has_class = bool(re.search(r"\b(клас|class|grade)\b", content_join))
+            has_form_num = form_token and form_token in content_join
+            has_subject = subject_norm and subject_norm in content_join
+            content_items = [c for c in content_list if c.strip()]
+            # If a slide looks like a cover, skip it
+            if title_norm == topic_norm and len(content_items) <= 3:
+                continue
+            if len(content_items) <= 3 and (has_class or has_form_num or has_subject):
                 continue
             cleaned_slides.append(s)
         slides = cleaned_slides
@@ -328,7 +337,7 @@ def generate_presentation_with_gemini(
             f"Create a high-quality educational presentation cover slide. "
             f"VISUALS: {subject_theme} STRICTLY follow this theme - do not mix themes from other subjects. "
             f"LAYOUT: Modern, clean, readable font, high contrast. "
-            f"TEXT: Render ONLY the title '{topic_title}' in {text_language}. "
+            f"TEXT: Render ONLY the topic title '{topic_title}' in {text_language}. "
             f"Do NOT add grade/class number. Do NOT add words like Slide/Слайд or any numbering. "
             f"Do NOT add any UI labels like 'header', 'headline', 'title', 'body'. "
             f"Do NOT render the words 'title slide' or any equivalent. "
@@ -420,13 +429,29 @@ def generate_presentation_with_gemini(
             def _clean_text(raw: str) -> str:
                 text = raw.strip()
                 text = re.sub(r"^\s*(#+|\*+|-+|\d+[\.\)])\s*", "", text)
+                text = re.sub(r"[*_`]+", "", text)
                 text = re.sub(r"\s+", " ", text).strip()
                 return text
 
-            content = " ".join(
-                [f"• {_clean_text(item)}" for item in slide_content if item.strip()]
-            )
-            slide_title = _clean_text(slide_title)
+            def _strip_metadata(raw: str) -> str:
+                text = _clean_text(raw)
+                if subject:
+                    text = re.sub(re.escape(subject), "", text, flags=re.IGNORECASE)
+                text = re.sub(r"\b(клас|class|grade)\s*\d+\b", "", text, flags=re.IGNORECASE)
+                text = re.sub(r"\b\d+\s*(клас|class|grade)\b", "", text, flags=re.IGNORECASE)
+                text = re.sub(r"\s+", " ", text).strip(" -–—,:;")
+                return text
+
+            slide_title = _strip_metadata(slide_title) or topic_title
+            cleaned_items = []
+            for item in slide_content:
+                if not item.strip():
+                    continue
+                cleaned = _strip_metadata(item)
+                if cleaned:
+                    cleaned_items.append(cleaned)
+
+            content = " ".join([f"• {item}" for item in cleaned_items])
             
             # Create prompt for complete slide with text embedded
             # STRICTLY enforce subject theme and language
@@ -803,7 +828,7 @@ def generate_presentation_text_for_topic(
     return False, "Max retries exceeded"
 
 
-def sanitize_filename(text: str, max_length: int = 200) -> str:
+def sanitize_filename(text: str, max_length: int = 100) -> str:
     """Sanitize text to be used as a filename."""
     # Remove or replace invalid characters
     text = re.sub(r'[<>:"/\\|?*]', '_', text)
