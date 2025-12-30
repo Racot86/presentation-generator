@@ -77,7 +77,8 @@ PROJECT_ROOT = Path(__file__).resolve().parent
 TOC_ROOT = PROJECT_ROOT / "toc_openai_filtered"
 OUTPUT_ROOT = PROJECT_ROOT / "generated_presentations"
 
-MAX_API_RETRIES = 3
+MAX_API_RETRIES = 5  # Retry up to 5 times for generation problems
+GENERATION_RETRIES = 5  # Number of retries for entire generation process (text + PDF)
 API_RETRY_BASE_DELAY = 3.0  # seconds
 GEMINI_MODEL = os.environ.get("VERTEX_TEXT_MODEL", "gemini-2.0-flash")
 VERTEX_IMAGE_MODEL = os.environ.get("VERTEX_IMAGE_MODEL", "gemini-3-pro-image-preview")
@@ -97,6 +98,12 @@ IMAGE_JPEG_QUALITY = int(os.environ.get("PRESENTATION_IMAGE_QUALITY", "70"))
 
 # Thread lock for safe printing
 print_lock = threading.Lock()
+
+# Thread lock for safe failure logging
+failure_log_lock = threading.Lock()
+
+# Failure log file path
+FAILURE_LOG_FILE = PROJECT_ROOT / "failure_presentation.json"
 
 
 def _load_env_file(env_path: Path) -> Dict[str, str]:
@@ -135,16 +142,19 @@ def _load_vertex_env_defaults() -> Tuple[str, str]:
 
 def _init_vertex_genai_client() -> Tuple[Any, Any]:
     """Initialize google-genai client for Vertex AI."""
-    project, region = _load_vertex_env_defaults()
     try:
-        from google import genai  # type: ignore
-        from google.genai import types  # type: ignore
+        project, region = _load_vertex_env_defaults()
+        try:
+            from google import genai  # type: ignore
+            from google.genai import types  # type: ignore
+        except Exception as e:
+            raise RuntimeError(
+                f"Required library not installed: {e}. Install with: pip install google-genai"
+            )
+        client = genai.Client(vertexai=True, project=project, location=region)
+        return client, types
     except Exception as e:
-        raise RuntimeError(
-            f"Required library not installed: {e}. Install with: pip install google-genai"
-        )
-    client = genai.Client(vertexai=True, project=project, location=region)
-    return client, types
+        raise RuntimeError(f"Failed to initialize Vertex AI client: {e}")
 
 
 def generate_presentation_with_gemini(
@@ -294,7 +304,10 @@ def generate_presentation_with_gemini(
             with print_lock:
                 print(f"    ✓ Using Vertex AI Gemini Image model: {model_id}")
         except Exception as e:
-            return False, f"Failed to initialize Vertex Gemini client: {e}"
+            error_msg = str(e)
+            with print_lock:
+                print(f"    ❌ Failed to initialize Vertex Gemini client: {error_msg[:150]}")
+            return False, f"Failed to initialize Vertex Gemini client: {error_msg[:200]}"
         
         # Generate title slide image
         temp_dir = PathLib(tempfile.mkdtemp())
@@ -400,7 +413,10 @@ def generate_presentation_with_gemini(
                     break
             
             if not image_saved:
-                return False, "Title slide generation failed: No image data in response"
+                with print_lock:
+                    print(f"      ⚠️  Title slide generation failed: No image data in response")
+                # Don't return False here - continue to try content slides
+                # We'll check if we have any images at the end
                 
         except Exception as e:
             error_msg = str(e)
@@ -408,16 +424,22 @@ def generate_presentation_with_gemini(
                 print(f"      ❌ Title slide generation failed: {error_msg[:150]}")
             
             # Better error handling
-            if "429" in str(e) or "Quota" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
-                with print_lock:
-                    print(f"      ⏳ Rate limit/quota hit, waiting 60 seconds...")
-                time.sleep(60)
-            elif "403" in str(e) or "PERMISSION_DENIED" in str(e):
-                return False, "Permission denied. Check your API key and access."
-            elif "SAFETY" in str(e):
-                return False, "Safety filter triggered. Try with different content."
+            try:
+                if "429" in str(e) or "Quota" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
+                    with print_lock:
+                        print(f"      ⏳ Rate limit/quota hit, waiting 60 seconds...")
+                    time.sleep(60)
+                elif "403" in str(e) or "PERMISSION_DENIED" in str(e):
+                    with print_lock:
+                        print(f"      ⚠️  Permission denied. Check your API key and access.")
+                elif "SAFETY" in str(e):
+                    with print_lock:
+                        print(f"      ⚠️  Safety filter triggered.")
+            except Exception:
+                pass
             
-            return False, f"Title slide generation failed: {error_msg[:200]}"
+            # Don't return False here - continue to try content slides
+            # We'll check if we have any images at the end
         
         # Generate content slide images
         for idx, slide in enumerate(slides, 1):
@@ -570,33 +592,36 @@ def generate_presentation_with_gemini(
             return False, "No slide images were generated. Presentation not saved."
         
         # Step 3: Create PDF from generated slide images (Landscape orientation)
-        buffer = io.BytesIO()
-        
-        # Use landscape A4 (width > height)
-        landscape_a4 = landscape(A4)  # (11.69 inch, 8.27 inch)
-        
-        # Use small margins to ensure images fit within frame
-        # ReportLab has internal frame calculations, so we need some margin
-        margin_pts = 10  # Small margin in points
-        doc = SimpleDocTemplate(
-            buffer,
-            pagesize=landscape_a4,
-            rightMargin=margin_pts,
-            leftMargin=margin_pts,
-            topMargin=margin_pts,
-            bottomMargin=margin_pts
-        )
-        
-        story = []
-        # Leave extra headroom so ReportLab never overflows the frame
-        max_width_pts = doc.width * 0.95
-        max_height_pts = doc.height * 0.95
-        safety_scale = 0.95
-        
-        # Add all generated images as full-page slides in landscape
-        for img_path in generated_images:
-            if img_path.exists():
+        try:
+            buffer = io.BytesIO()
+            
+            # Use landscape A4 (width > height)
+            landscape_a4 = landscape(A4)  # (11.69 inch, 8.27 inch)
+            
+            # Use small margins to ensure images fit within frame
+            # ReportLab has internal frame calculations, so we need some margin
+            margin_pts = 10  # Small margin in points
+            doc = SimpleDocTemplate(
+                buffer,
+                pagesize=landscape_a4,
+                rightMargin=margin_pts,
+                leftMargin=margin_pts,
+                topMargin=margin_pts,
+                bottomMargin=margin_pts
+            )
+            
+            story = []
+            # Leave extra headroom so ReportLab never overflows the frame
+            max_width_pts = doc.width * 0.95
+            max_height_pts = doc.height * 0.95
+            safety_scale = 0.95
+            
+            # Add all generated images as full-page slides in landscape
+            for img_path in generated_images:
                 try:
+                    if not img_path.exists():
+                        continue
+                    
                     # Get actual image dimensions
                     pil_img = PILImage.open(str(img_path))
                     img_width_px, img_height_px = pil_img.size
@@ -621,31 +646,54 @@ def generate_presentation_with_gemini(
                     story.append(PageBreak())
                 except Exception as e:
                     with print_lock:
-                        print(f"      ⚠️  Error adding image {img_path.name}: {str(e)[:100]}")
-        
-        # Build PDF
-        doc.build(story)
-        
-        # Clean up temporary images
-        for img_path in generated_images:
+                        print(f"      ⚠️  Error adding image {img_path.name if hasattr(img_path, 'name') else str(img_path)}: {str(e)[:100]}")
+                    continue
+            
+            if not story:
+                return False, "No images could be added to PDF"
+            
+            # Build PDF
             try:
-                if img_path.exists():
-                    img_path.unlink()
+                doc.build(story)
+            except Exception as e:
+                return False, f"Error building PDF: {e}"
+            
+            # Clean up temporary images
+            for img_path in generated_images:
+                try:
+                    if img_path.exists():
+                        img_path.unlink()
+                except Exception:
+                    pass
+            try:
+                if temp_dir.exists():
+                    temp_dir.rmdir()
             except Exception:
                 pass
-        try:
-            temp_dir.rmdir()
-        except Exception:
-            pass
+            
+            # Get PDF bytes
+            pdf_bytes = buffer.getvalue()
+            buffer.close()
+            
+            if len(pdf_bytes) == 0:
+                return False, "Generated PDF is empty"
+            
+            return True, pdf_bytes
         
-        # Get PDF bytes
-        pdf_bytes = buffer.getvalue()
-        buffer.close()
-        
-        if len(pdf_bytes) == 0:
-            return False, "Generated PDF is empty"
-        
-        return True, pdf_bytes
+        except Exception as e:
+            # Clean up on error
+            try:
+                for img_path in generated_images:
+                    try:
+                        if img_path.exists():
+                            img_path.unlink()
+                    except Exception:
+                        pass
+                if temp_dir.exists():
+                    temp_dir.rmdir()
+            except Exception:
+                pass
+            return False, f"Error creating PDF: {e}"
         
     except ImportError as e:
         missing_lib = str(e)
@@ -792,8 +840,16 @@ def generate_presentation_text_for_topic(
     form: int,
     context: Optional[str] = None,
 ) -> Tuple[bool, Optional[str]]:
-    """Generate presentation text for a topic using Gemini on Vertex AI."""
-    prompt = build_presentation_prompt(topic_title, subject, form, context)
+    """Generate presentation text for a topic using Gemini on Vertex AI.
+    
+    Retries up to MAX_API_RETRIES times for empty responses or errors.
+    """
+    try:
+        prompt = build_presentation_prompt(topic_title, subject, form, context)
+    except Exception as e:
+        with print_lock:
+            print(f"      ⚠️  Error building prompt: {e}")
+        return False, f"Error building prompt: {e}"
     
     for attempt in range(MAX_API_RETRIES):
         try:
@@ -808,8 +864,12 @@ def generate_presentation_text_for_topic(
             response_text = getattr(response, "text", None) or str(response)
             if not response_text or not response_text.strip():
                 if attempt < MAX_API_RETRIES - 1:
+                    with print_lock:
+                        print(f"      ⚠️  Empty response, retrying ({attempt + 1}/{MAX_API_RETRIES})...")
                     time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
                     continue
+                with print_lock:
+                    print(f"      ❌ Empty response after {MAX_API_RETRIES} attempts")
                 return False, "Empty response from Gemini"
             
             # Check if Gemini indicated the topic is not suitable
@@ -817,13 +877,20 @@ def generate_presentation_text_for_topic(
             if any(phrase in response_lower for phrase in ["не підходить", "не стосується", "не можу", "порожній"]):
                 return False, "Topic not suitable for presentation"
             
+            # Success - got valid response
+            if attempt > 0:
+                with print_lock:
+                    print(f"      ✓ Success on attempt {attempt + 1}")
             return True, response_text.strip()
                 
         except Exception as e:
+            error_msg = str(e)
+            with print_lock:
+                print(f"      ⚠️  Attempt {attempt + 1}/{MAX_API_RETRIES} failed: {error_msg[:100]}")
             if attempt < MAX_API_RETRIES - 1:
                 time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
                 continue
-            return False, f"Exception: {e}"
+            return False, f"Exception: {error_msg[:200]}"
     
     return False, "Max retries exceeded"
 
@@ -842,106 +909,260 @@ def sanitize_filename(text: str, max_length: int = 100) -> str:
     return text or "untitled"
 
 
+def log_failure(
+    topic_title: str,
+    subject: str,
+    form: int,
+    output_dir: Path,
+    error_message: str,
+    json_path: Optional[Path] = None,
+) -> None:
+    """Log failed presentation generation to failure_presentation.json.
+    
+    Thread-safe logging of failures with path and filename information.
+    """
+    try:
+        with failure_log_lock:
+            # Read existing failures
+            failures = []
+            if FAILURE_LOG_FILE.exists():
+                try:
+                    with open(FAILURE_LOG_FILE, 'r', encoding='utf-8') as f:
+                        failures = json.load(f)
+                    if not isinstance(failures, list):
+                        failures = []
+                except Exception as e:
+                    with print_lock:
+                        print(f"  ⚠️  Error reading failure log: {e}")
+                    failures = []
+            
+            # Generate expected output filename
+            safe_topic = sanitize_filename(topic_title)
+            expected_filename = f"{safe_topic}.pdf"
+            expected_path = output_dir / expected_filename
+            
+            # Create failure entry
+            failure_entry = {
+                "topic_title": topic_title,
+                "subject": subject,
+                "form": form,
+                "output_directory": str(output_dir),
+                "expected_filename": expected_filename,
+                "expected_path": str(expected_path),
+                "error_message": error_message,
+                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+            }
+            
+            # Add source JSON path if available
+            if json_path:
+                failure_entry["source_json_path"] = str(json_path)
+            
+            # Add to failures list
+            failures.append(failure_entry)
+            
+            # Write back to file
+            try:
+                with open(FAILURE_LOG_FILE, 'w', encoding='utf-8') as f:
+                    json.dump(failures, f, ensure_ascii=False, indent=2)
+            except Exception as e:
+                with print_lock:
+                    print(f"  ⚠️  Error writing failure log: {e}")
+    
+    except Exception as e:
+        # Don't let logging failures stop the process
+        with print_lock:
+            print(f"  ⚠️  Error logging failure: {e}")
+
+
 def process_single_topic(
     topic_title: str,
     subject: str,
     form: int,
     output_dir: Path,
+    json_path: Optional[Path] = None,
 ) -> Tuple[str, bool, Optional[str]]:
     """Process a single topic and generate presentation.
     
     Returns (topic_title, success, message)
     """
-    # Skip generic TOC entries, greetings, and addresses to students
-    topic_lower = topic_title.lower()
-    skip_patterns = [
-        "зміст", "вступ", "від автора", "передмова", "додатки", "список літератури",
-        "шановні", "дорогі", "читачі", "друзі",  # Greetings and addresses
-        "шановні дев'ятикласники", "шановні дев'ятикласниці",  # Specific greeting pattern
-        "дорогі учні", "дорогі студенти", "шановні учні", "шановні студенти",
-    ]
-    if any(skip_word in topic_lower for skip_word in skip_patterns):
-        with print_lock:
-            print(f"  ⏭️  Skipping (greeting/intro): {topic_title[:60]}...")
-        return (topic_title, False, "greeting/intro")
-    
-    # Additional check: if topic starts with greeting words, skip it
-    greeting_starters = ["шановні", "дорогі", "читачі", "друзі"]
-    if any(topic_lower.startswith(starter) for starter in greeting_starters):
-        with print_lock:
-            print(f"  ⏭️  Skipping (greeting): {topic_title[:60]}...")
-        return (topic_title, False, "greeting")
-    
-    # Check if presentation already exists for this topic
-    safe_topic = sanitize_filename(topic_title)
-    potential_filenames = [f"{safe_topic}.pdf"]
-    # Also check for numbered variants (in case of previous conflicts)
-    for i in range(1, 10):  # Check up to 9 variants
-        potential_filenames.append(f"{safe_topic}_{i}.pdf")
-    
-    # Check if any of these files exist
-    presentation_exists = False
-    existing_file = None
-    for filename in potential_filenames:
-        potential_path = output_dir / filename
-        if potential_path.exists() and potential_path.stat().st_size > 0:
-            presentation_exists = True
-            existing_file = filename
-            break
-    
-    if presentation_exists:
-        with print_lock:
-            print(f"  ✓ Presentation already exists: {existing_file} - skipping")
-        return (topic_title, False, "already_exists")
-    
-    with print_lock:
-        print(f"  📝 Generating presentation for: {topic_title[:60]}...")
-    
-    # Step 1: Generate presentation text with Gemini
-    ok, presentation_text = generate_presentation_text_for_topic(topic_title, subject, form)
-    
-    if not ok or not presentation_text:
-        with print_lock:
-            print(f"    ❌ Error generating text: {presentation_text}")
-        return (topic_title, False, f"text_generation_error: {presentation_text}")
-    
-    # Step 2: Generate PDF presentation with Gemini 3 Image Preview
-    ok_pdf, pdf_result = generate_presentation_with_gemini(
-        presentation_text, topic_title, subject, form
-    )
-    
-    if not ok_pdf:
-        with print_lock:
-            print(f"    ❌ Error generating PDF: {pdf_result}")
-        return (topic_title, False, f"pdf_generation_error: {pdf_result}")
-    
-    if not pdf_result or len(pdf_result) == 0:
-        with print_lock:
-            print(f"    ❌ Empty PDF generated")
-        return (topic_title, False, "empty_pdf")
-    
-    # Generate output filename
-    output_filename = f"{safe_topic}.pdf"
-    output_path = output_dir / output_filename
-    
-    # Handle filename conflicts (thread-safe)
-    counter = 1
-    while output_path.exists():
-        output_filename = f"{safe_topic}_{counter}.pdf"
-        output_path = output_dir / output_filename
-        counter += 1
-    
-    # Save PDF (thread-safe file writing)
     try:
-        with open(output_path, 'wb') as f:
-            f.write(pdf_result)
+        # Skip generic TOC entries, greetings, and addresses to students
+        try:
+            topic_lower = topic_title.lower()
+        except Exception:
+            topic_lower = str(topic_title).lower()
+        
+        skip_patterns = [
+            "зміст", "вступ", "від автора", "передмова", "додатки", "список літератури",
+            "шановні", "дорогі", "читачі", "друзі",  # Greetings and addresses
+            "шановні дев'ятикласники", "шановні дев'ятикласниці",  # Specific greeting pattern
+            "дорогі учні", "дорогі студенти", "шановні учні", "шановні студенти",
+        ]
+        if any(skip_word in topic_lower for skip_word in skip_patterns):
+            with print_lock:
+                print(f"  ⏭️  Skipping (greeting/intro): {topic_title[:60]}...")
+            return (topic_title, False, "greeting/intro")
+        
+        # Additional check: if topic starts with greeting words, skip it
+        greeting_starters = ["шановні", "дорогі", "читачі", "друзі"]
+        if any(topic_lower.startswith(starter) for starter in greeting_starters):
+            with print_lock:
+                print(f"  ⏭️  Skipping (greeting): {topic_title[:60]}...")
+            return (topic_title, False, "greeting")
+        
+        # Check if presentation already exists for this topic
+        try:
+            safe_topic = sanitize_filename(topic_title)
+        except Exception as e:
+            with print_lock:
+                print(f"  ⚠️  Error sanitizing filename: {e}")
+            safe_topic = "untitled"
+        
+        potential_filenames = [f"{safe_topic}.pdf"]
+        # Also check for numbered variants (in case of previous conflicts)
+        for i in range(1, 10):  # Check up to 9 variants
+            potential_filenames.append(f"{safe_topic}_{i}.pdf")
+        
+        # Check if any of these files exist
+        presentation_exists = False
+        existing_file = None
+        try:
+            for filename in potential_filenames:
+                potential_path = output_dir / filename
+                if potential_path.exists() and potential_path.stat().st_size > 0:
+                    presentation_exists = True
+                    existing_file = filename
+                    break
+        except Exception as e:
+            with print_lock:
+                print(f"  ⚠️  Error checking existing files: {e}")
+        
+        if presentation_exists:
+            with print_lock:
+                print(f"  ✓ Presentation already exists: {existing_file} - skipping")
+            return (topic_title, False, "already_exists")
+        
         with print_lock:
-            print(f"    ✅ Saved: {output_filename} ({len(pdf_result)} bytes)")
-        return (topic_title, True, "success")
+            print(f"  📝 Generating presentation for: {topic_title[:60]}...")
+        
+        # Retry entire generation process up to GENERATION_RETRIES times
+        last_error = None
+        pdf_result = None
+        generation_success = False
+        
+        for gen_attempt in range(GENERATION_RETRIES):
+            if gen_attempt > 0:
+                with print_lock:
+                    print(f"    🔄 Retry attempt {gen_attempt + 1}/{GENERATION_RETRIES}...")
+                time.sleep(API_RETRY_BASE_DELAY * gen_attempt)  # Progressive delay
+            
+            # Step 1: Generate presentation text with Gemini
+            try:
+                ok, presentation_text = generate_presentation_text_for_topic(topic_title, subject, form)
+            except Exception as e:
+                last_error = f"text_generation_exception: {e}"
+                with print_lock:
+                    print(f"    ❌ Exception generating text (attempt {gen_attempt + 1}): {e}")
+                if gen_attempt < GENERATION_RETRIES - 1:
+                    continue
+                break  # Exit loop, will return error below
+            
+            if not ok or not presentation_text:
+                last_error = f"text_generation_error: {presentation_text}"
+                with print_lock:
+                    print(f"    ❌ Error generating text (attempt {gen_attempt + 1}): {presentation_text}")
+                if gen_attempt < GENERATION_RETRIES - 1:
+                    continue
+                break  # Exit loop, will return error below
+            
+            # Step 2: Generate PDF presentation with Gemini 3 Image Preview
+            try:
+                ok_pdf, pdf_result = generate_presentation_with_gemini(
+                    presentation_text, topic_title, subject, form
+                )
+            except Exception as e:
+                last_error = f"pdf_generation_exception: {e}"
+                with print_lock:
+                    print(f"    ❌ Exception generating PDF (attempt {gen_attempt + 1}): {e}")
+                if gen_attempt < GENERATION_RETRIES - 1:
+                    continue
+                break  # Exit loop, will return error below
+            
+            if not ok_pdf:
+                last_error = f"pdf_generation_error: {pdf_result}"
+                with print_lock:
+                    print(f"    ❌ Error generating PDF (attempt {gen_attempt + 1}): {pdf_result}")
+                if gen_attempt < GENERATION_RETRIES - 1:
+                    continue
+                break  # Exit loop, will return error below
+            
+            if not pdf_result or len(pdf_result) == 0:
+                last_error = "empty_pdf"
+                with print_lock:
+                    print(f"    ❌ Empty PDF generated (attempt {gen_attempt + 1})")
+                if gen_attempt < GENERATION_RETRIES - 1:
+                    continue
+                break  # Exit loop, will return error below
+            
+            # Success - we have a valid PDF
+            generation_success = True
+            if gen_attempt > 0:
+                with print_lock:
+                    print(f"    ✓ Success on generation attempt {gen_attempt + 1}")
+            break
+        
+        # Check if generation was successful
+        if not generation_success or not pdf_result or len(pdf_result) == 0:
+            error_msg = last_error or "Generation failed after all retries"
+            with print_lock:
+                print(f"    ❌ Generation failed after {GENERATION_RETRIES} attempts")
+            # Log failure
+            log_failure(topic_title, subject, form, output_dir, error_msg, json_path)
+            return (topic_title, False, error_msg)
+        
+        # Generate output filename
+        output_filename = f"{safe_topic}.pdf"
+        output_path = output_dir / output_filename
+        
+        # Handle filename conflicts (thread-safe)
+        counter = 1
+        try:
+            while output_path.exists():
+                output_filename = f"{safe_topic}_{counter}.pdf"
+                output_path = output_dir / output_filename
+                counter += 1
+                if counter > 100:  # Safety limit
+                    break
+        except Exception as e:
+            with print_lock:
+                print(f"    ⚠️  Error checking filename conflicts: {e}")
+        
+        # Save PDF (thread-safe file writing)
+        try:
+            with open(output_path, 'wb') as f:
+                f.write(pdf_result)
+            with print_lock:
+                print(f"    ✅ Saved: {output_filename} ({len(pdf_result)} bytes)")
+            return (topic_title, True, "success")
+        except Exception as e:
+            error_msg = f"save_error: {e}"
+            with print_lock:
+                print(f"    ❌ Error saving file: {e}")
+            # Log failure
+            log_failure(topic_title, subject, form, output_dir, error_msg, json_path)
+            return (topic_title, False, error_msg)
+    
     except Exception as e:
+        # Catch-all for any unexpected errors
+        error_msg = f"unexpected_error: {e}"
         with print_lock:
-            print(f"    ❌ Error saving file: {e}")
-        return (topic_title, False, f"save_error: {e}")
+            print(f"  ❌ Unexpected error processing topic '{topic_title[:60]}': {e}")
+        # Log failure
+        try:
+            log_failure(topic_title, subject, form, output_dir, error_msg, json_path)
+        except Exception:
+            pass  # Don't let logging errors propagate
+        return (topic_title, False, error_msg)
 
 
 def process_toc_file(json_path: Path, output_root: Path) -> Tuple[int, int]:
@@ -949,138 +1170,219 @@ def process_toc_file(json_path: Path, output_root: Path) -> Tuple[int, int]:
     
     Returns (success_count, skip_count).
     """
-    with print_lock:
-        print(f"\nProcessing: {json_path}")
-    
-    # Extract subject and form from path
-    subject, form = extract_subject_form_from_path(json_path)
-    if not subject or form is None:
-        with print_lock:
-            print(f"  ⚠️  Could not extract subject/form from path, skipping")
-        return 0, 0
-    
-    with print_lock:
-        print(f"  Subject: {subject}, Form: {form}")
-    
-    # Read TOC JSON
     try:
-        with open(json_path, 'r', encoding='utf-8') as f:
-            toc_data = json.load(f)
+        with print_lock:
+            print(f"\nProcessing: {json_path}")
+        
+        # Extract subject and form from path
+        try:
+            subject, form = extract_subject_form_from_path(json_path)
+        except Exception as e:
+            with print_lock:
+                print(f"  ⚠️  Error extracting subject/form: {e}")
+            return 0, 0
+        
+        if not subject or form is None:
+            with print_lock:
+                print(f"  ⚠️  Could not extract subject/form from path, skipping")
+            return 0, 0
+        
+        with print_lock:
+            print(f"  Subject: {subject}, Form: {form}")
+        
+        # Read TOC JSON
+        try:
+            with open(json_path, 'r', encoding='utf-8') as f:
+                toc_data = json.load(f)
+        except Exception as e:
+            with print_lock:
+                print(f"  ❌ Error reading file: {e}")
+            return 0, 0
+        
+        if not isinstance(toc_data, dict) or "toc" not in toc_data:
+            with print_lock:
+                print(f"  ⚠️  Invalid TOC structure, skipping")
+            return 0, 0
+        
+        toc_items = toc_data.get("toc", [])
+        if not toc_items:
+            with print_lock:
+                print(f"  ⚠️  Empty TOC, skipping")
+            return 0, 0
+        
+        # Create output directory
+        try:
+            output_dir = output_root / subject / str(form)
+            output_dir.mkdir(parents=True, exist_ok=True)
+        except Exception as e:
+            with print_lock:
+                print(f"  ❌ Error creating output directory: {e}")
+            return 0, 0
+        
+        # Collect topics to process
+        topics_to_process = []
+        try:
+            for toc_item in toc_items:
+                if not isinstance(toc_item, dict):
+                    continue
+                
+                try:
+                    topic_title = toc_item.get("title", "").strip()
+                    if topic_title:
+                        topics_to_process.append(topic_title)
+                except Exception as e:
+                    with print_lock:
+                        print(f"  ⚠️  Error extracting topic title: {e}")
+                    continue
+        except Exception as e:
+            with print_lock:
+                print(f"  ⚠️  Error processing TOC items: {e}")
+        
+        if not topics_to_process:
+            return 0, 0
+        
+        with print_lock:
+            print(f"  Found {len(topics_to_process)} topics to process (using {NUM_WORKERS} workers)")
+        
+        # Process topics in parallel
+        success_count = 0
+        skip_count = 0
+        
+        try:
+            with ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
+                # Submit all tasks
+                future_to_topic = {}
+                try:
+                    for topic_title in topics_to_process:
+                        try:
+                            future = executor.submit(
+                                process_single_topic,
+                                topic_title,
+                                subject,
+                                form,
+                                output_dir,
+                                json_path,  # Pass json_path for failure logging
+                            )
+                            future_to_topic[future] = topic_title
+                        except Exception as e:
+                            with print_lock:
+                                print(f"  ⚠️  Error submitting task for {topic_title[:60]}: {e}")
+                            skip_count += 1
+                except Exception as e:
+                    with print_lock:
+                        print(f"  ⚠️  Error submitting tasks: {e}")
+                
+                # Process completed tasks
+                for future in as_completed(future_to_topic):
+                    topic_title = future_to_topic.get(future, "unknown")
+                    try:
+                        _, success, message = future.result()
+                        if success:
+                            success_count += 1
+                        else:
+                            skip_count += 1
+                    except Exception as e:
+                        with print_lock:
+                            print(f"  ❌ Exception processing {topic_title[:60]}: {e}")
+                        skip_count += 1
+                    
+                    # Small delay to avoid overwhelming the API
+                    try:
+                        time.sleep(0.1)
+                    except Exception:
+                        pass
+        
+        except Exception as e:
+            with print_lock:
+                print(f"  ❌ Error in parallel processing: {e}")
+        
+        return success_count, skip_count
+    
     except Exception as e:
+        # Catch-all for any unexpected errors
         with print_lock:
-            print(f"  ❌ Error reading file: {e}")
+            print(f"  ❌ Unexpected error processing TOC file '{json_path}': {e}")
         return 0, 0
-    
-    if not isinstance(toc_data, dict) or "toc" not in toc_data:
-        with print_lock:
-            print(f"  ⚠️  Invalid TOC structure, skipping")
-        return 0, 0
-    
-    toc_items = toc_data.get("toc", [])
-    if not toc_items:
-        with print_lock:
-            print(f"  ⚠️  Empty TOC, skipping")
-        return 0, 0
-    
-    # Create output directory
-    output_dir = output_root / subject / str(form)
-    output_dir.mkdir(parents=True, exist_ok=True)
-    
-    # Collect topics to process
-    topics_to_process = []
-    for toc_item in toc_items:
-        if not isinstance(toc_item, dict):
-            continue
-        
-        topic_title = toc_item.get("title", "").strip()
-        if topic_title:
-            topics_to_process.append(topic_title)
-    
-    if not topics_to_process:
-        return 0, 0
-    
-    with print_lock:
-        print(f"  Found {len(topics_to_process)} topics to process (using {NUM_WORKERS} workers)")
-    
-    # Process topics in parallel
-    success_count = 0
-    skip_count = 0
-    
-    with ThreadPoolExecutor(max_workers=NUM_WORKERS) as executor:
-        # Submit all tasks
-        future_to_topic = {
-            executor.submit(
-                process_single_topic,
-                topic_title,
-                subject,
-                form,
-                output_dir,
-            ): topic_title
-            for topic_title in topics_to_process
-        }
-        
-        # Process completed tasks
-        for future in as_completed(future_to_topic):
-            topic_title = future_to_topic[future]
-            try:
-                _, success, message = future.result()
-                if success:
-                    success_count += 1
-                else:
-                    skip_count += 1
-            except Exception as e:
-                with print_lock:
-                    print(f"  ❌ Exception processing {topic_title[:60]}: {e}")
-                skip_count += 1
-            
-            # Small delay to avoid overwhelming the API
-            time.sleep(0.1)
-    
-    return success_count, skip_count
 
 
 def main():
     """Main function to process all TOC JSON files."""
-    # Ensure filenames under toc_openai_filtered are safe/short enough
-    _shorten_toc_filenames_if_needed()
+    try:
+        # Ensure filenames under toc_openai_filtered are safe/short enough
+        try:
+            _shorten_toc_filenames_if_needed()
+        except Exception as e:
+            print(f"⚠️  Warning: Filename shortening failed: {e}")
 
-    if not TOC_ROOT.exists():
-        print(f"❌ TOC directory not found: {TOC_ROOT}")
-        sys.exit(1)
+        try:
+            if not TOC_ROOT.exists():
+                print(f"❌ TOC directory not found: {TOC_ROOT}")
+                return
+        except Exception as e:
+            print(f"❌ Error checking TOC directory: {e}")
+            return
+        
+        # Find all JSON files
+        try:
+            json_files = list(TOC_ROOT.rglob("*.json"))
+        except Exception as e:
+            print(f"❌ Error finding JSON files: {e}")
+            return
+        
+        if not json_files:
+            print(f"⚠️  No JSON files found in {TOC_ROOT}")
+            return
+        
+        print(f"Found {len(json_files)} JSON files to process")
+        print(f"Output directory: {OUTPUT_ROOT}")
+        print(f"Using Gemini model: {GEMINI_MODEL}")
+        print(f"Using Vertex image model: {VERTEX_IMAGE_MODEL}")
+        print(f"Number of parallel workers: {NUM_WORKERS}")
+        
+        # Validate Vertex config early
+        try:
+            project, region = _load_vertex_env_defaults()
+            print(f"Vertex project: {project}")
+            print(f"Vertex region: {region}")
+        except Exception as e:
+            print(f"⚠️  Warning: Error loading Vertex config: {e}")
+        
+        total_success = 0
+        total_skip = 0
+        
+        for i, json_path in enumerate(json_files, 1):
+            try:
+                print(f"\n[{i}/{len(json_files)}]")
+                success, skip = process_toc_file(json_path, OUTPUT_ROOT)
+                total_success += success
+                total_skip += skip
+            except Exception as e:
+                print(f"  ❌ Error processing file {i}/{len(json_files)} '{json_path}': {e}")
+                total_skip += 1
+                continue
+        
+        print(f"\n{'='*60}")
+        print(f"Summary:")
+        print(f"  ✅ Successfully generated: {total_success} presentations")
+        print(f"  ⏭️  Skipped: {total_skip} topics")
+        print(f"{'='*60}")
     
-    # Find all JSON files
-    json_files = list(TOC_ROOT.rglob("*.json"))
-    
-    if not json_files:
-        print(f"❌ No JSON files found in {TOC_ROOT}")
-        sys.exit(1)
-    
-    print(f"Found {len(json_files)} JSON files to process")
-    print(f"Output directory: {OUTPUT_ROOT}")
-    print(f"Using Gemini model: {GEMINI_MODEL}")
-    print(f"Using Vertex image model: {VERTEX_IMAGE_MODEL}")
-    print(f"Number of parallel workers: {NUM_WORKERS}")
-    
-    # Validate Vertex config early
-    project, region = _load_vertex_env_defaults()
-    print(f"Vertex project: {project}")
-    print(f"Vertex region: {region}")
-    
-    total_success = 0
-    total_skip = 0
-    
-    for i, json_path in enumerate(json_files, 1):
-        print(f"\n[{i}/{len(json_files)}]")
-        success, skip = process_toc_file(json_path, OUTPUT_ROOT)
-        total_success += success
-        total_skip += skip
-    
-    print(f"\n{'='*60}")
-    print(f"Summary:")
-    print(f"  ✅ Successfully generated: {total_success} presentations")
-    print(f"  ⏭️  Skipped: {total_skip} topics")
-    print(f"{'='*60}")
+    except KeyboardInterrupt:
+        print("\n⚠️  Process interrupted by user")
+    except Exception as e:
+        print(f"\n❌ Unexpected error in main: {e}")
+        import traceback
+        traceback.print_exc()
 
 
 if __name__ == "__main__":
-    main()
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\n⚠️  Process interrupted by user")
+        sys.exit(0)
+    except Exception as e:
+        print(f"\n❌ Fatal error: {e}")
+        import traceback
+        traceback.print_exc()
+        sys.exit(1)
