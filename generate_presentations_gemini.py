@@ -20,7 +20,7 @@ import time
 import warnings
 from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 # -----------------------------
 # Pre-run filename shortening
@@ -104,6 +104,32 @@ failure_log_lock = threading.Lock()
 
 # Failure log file path
 FAILURE_LOG_FILE = PROJECT_ROOT / "failure_presentation.json"
+
+# Cancellation checker function (can be set by server to check for cancellation)
+_cancellation_checker: Optional[Callable[[], bool]] = None
+
+
+def set_cancellation_checker(checker: Optional[Callable[[], bool]]) -> None:
+    """Set a function to check if generation should be cancelled.
+    
+    The checker function should return True if generation should stop.
+    This allows the server to inject cancellation logic.
+    """
+    global _cancellation_checker
+    _cancellation_checker = checker
+
+
+def is_cancellation_requested() -> bool:
+    """Check if cancellation has been requested.
+    
+    Returns True if a cancellation checker is set and it returns True.
+    """
+    if _cancellation_checker is not None:
+        try:
+            return bool(_cancellation_checker())
+        except Exception:
+            return False
+    return False
 
 
 def _load_env_file(env_path: Path) -> Dict[str, str]:
@@ -1351,6 +1377,11 @@ def main():
         total_skip = 0
         
         for i, json_path in enumerate(json_files, 1):
+            # Check for cancellation before processing each file
+            if is_cancellation_requested():
+                print(f"\n⚠️  Generation cancelled by user/server")
+                break
+            
             try:
                 print(f"\n[{i}/{len(json_files)}]")
                 success, skip = process_toc_file(json_path, OUTPUT_ROOT)
@@ -1360,6 +1391,11 @@ def main():
                 print(f"  ❌ Error processing file {i}/{len(json_files)} '{json_path}': {e}")
                 total_skip += 1
                 continue
+            
+            # Check for cancellation after processing each file
+            if is_cancellation_requested():
+                print(f"\n⚠️  Generation cancelled by user/server")
+                break
         
         print(f"\n{'='*60}")
         print(f"Summary:")
