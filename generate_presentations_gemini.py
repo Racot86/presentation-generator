@@ -132,6 +132,26 @@ def is_cancellation_requested() -> bool:
     return False
 
 
+def sleep_with_cancellation_check(duration: float, check_interval: float = 1.0) -> bool:
+    """Sleep for the specified duration, checking for cancellation periodically.
+    
+    Args:
+        duration: Total sleep duration in seconds
+        check_interval: How often to check for cancellation (in seconds)
+    
+    Returns:
+        True if cancellation was requested, False if sleep completed normally
+    """
+    elapsed = 0.0
+    while elapsed < duration:
+        if is_cancellation_requested():
+            return True
+        sleep_time = min(check_interval, duration - elapsed)
+        time.sleep(sleep_time)
+        elapsed += sleep_time
+    return False
+
+
 def _load_env_file(env_path: Path) -> Dict[str, str]:
     """Very small .env reader (no external deps)."""
     env: Dict[str, str] = {}
@@ -454,7 +474,10 @@ def generate_presentation_with_gemini(
                 if "429" in str(e) or "Quota" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                     with print_lock:
                         print(f"      ⏳ Rate limit/quota hit, waiting 60 seconds...")
-                    time.sleep(60)
+                    if sleep_with_cancellation_check(60, check_interval=2.0):
+                        with print_lock:
+                            print(f"      ⏹️  Generation cancelled during rate limit wait")
+                        return False, "cancelled"
                 elif "403" in str(e) or "PERMISSION_DENIED" in str(e):
                     with print_lock:
                         print(f"      ⚠️  Permission denied. Check your API key and access.")
@@ -469,6 +492,12 @@ def generate_presentation_with_gemini(
         
         # Generate content slide images
         for idx, slide in enumerate(slides, 1):
+            # Check for cancellation before generating each slide
+            if is_cancellation_requested():
+                with print_lock:
+                    print(f"      ⏹️  Generation cancelled during slide {idx} generation")
+                break  # Exit the loop, we'll use whatever images we have
+            
             slide_title = slide.get("title", topic_title)
             slide_content = slide.get("content", [])
             image_prompt = slide.get("image_prompt", "")
@@ -590,7 +619,10 @@ def generate_presentation_with_gemini(
                 
                 # Add delay between slides to avoid rate limits
                 if image_saved:
-                    time.sleep(10)  # 10 second pause for quota safety
+                    if sleep_with_cancellation_check(10, check_interval=1.0):
+                        with print_lock:
+                            print(f"      ⏹️  Generation cancelled during slide delay")
+                        break  # Exit the slide generation loop
                     
             except Exception as e:
                 error_msg = str(e)
@@ -598,7 +630,10 @@ def generate_presentation_with_gemini(
                     if "429" in str(e) or "Quota" in str(e) or "RESOURCE_EXHAUSTED" in str(e):
                         print(f"      ⚠️  Slide {idx} generation failed (rate limit/quota): {error_msg[:80]}")
                         print(f"      ⏳ Waiting 60 seconds...")
-                        time.sleep(60)
+                        if sleep_with_cancellation_check(60, check_interval=2.0):
+                            with print_lock:
+                                print(f"      ⏹️  Generation cancelled during rate limit wait")
+                            break  # Exit the slide generation loop
                     elif "403" in str(e) or "PERMISSION_DENIED" in str(e):
                         print(f"      ⚠️  Slide {idx} generation failed (permissions): {error_msg[:80]}")
                     elif "SAFETY" in str(e):
@@ -878,6 +913,12 @@ def generate_presentation_text_for_topic(
         return False, f"Error building prompt: {e}"
     
     for attempt in range(MAX_API_RETRIES):
+        # Check for cancellation before each API call
+        if is_cancellation_requested():
+            with print_lock:
+                print(f"      ⏹️  Generation cancelled during text generation attempt {attempt + 1}")
+            return False, "cancelled"
+        
         try:
             client, types = _init_vertex_genai_client()
             response = client.models.generate_content(
@@ -892,7 +933,11 @@ def generate_presentation_text_for_topic(
                 if attempt < MAX_API_RETRIES - 1:
                     with print_lock:
                         print(f"      ⚠️  Empty response, retrying ({attempt + 1}/{MAX_API_RETRIES})...")
-                    time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
+                    delay = API_RETRY_BASE_DELAY * (attempt + 1)
+                    if sleep_with_cancellation_check(delay, check_interval=1.0):
+                        with print_lock:
+                            print(f"      ⏹️  Generation cancelled during retry delay")
+                        return False, "cancelled"
                     continue
                 with print_lock:
                     print(f"      ❌ Empty response after {MAX_API_RETRIES} attempts")
@@ -914,7 +959,11 @@ def generate_presentation_text_for_topic(
             with print_lock:
                 print(f"      ⚠️  Attempt {attempt + 1}/{MAX_API_RETRIES} failed: {error_msg[:100]}")
             if attempt < MAX_API_RETRIES - 1:
-                time.sleep(API_RETRY_BASE_DELAY * (attempt + 1))
+                delay = API_RETRY_BASE_DELAY * (attempt + 1)
+                if sleep_with_cancellation_check(delay, check_interval=1.0):
+                    with print_lock:
+                        print(f"      ⏹️  Generation cancelled during retry delay")
+                    return False, "cancelled"
                 continue
             return False, f"Exception: {error_msg[:200]}"
     
@@ -1071,16 +1120,32 @@ def process_single_topic(
         with print_lock:
             print(f"  📝 Generating presentation for: {topic_title[:60]}...")
         
+        # Check for cancellation before starting generation
+        if is_cancellation_requested():
+            with print_lock:
+                print(f"  ⏹️  Generation cancelled before starting")
+            return (topic_title, False, "cancelled")
+        
         # Retry entire generation process up to GENERATION_RETRIES times
         last_error = None
         pdf_result = None
         generation_success = False
         
         for gen_attempt in range(GENERATION_RETRIES):
+            # Check for cancellation before each retry attempt
+            if is_cancellation_requested():
+                with print_lock:
+                    print(f"  ⏹️  Generation cancelled during retry attempt {gen_attempt + 1}")
+                return (topic_title, False, "cancelled")
+            
             if gen_attempt > 0:
                 with print_lock:
                     print(f"    🔄 Retry attempt {gen_attempt + 1}/{GENERATION_RETRIES}...")
-                time.sleep(API_RETRY_BASE_DELAY * gen_attempt)  # Progressive delay
+                delay = API_RETRY_BASE_DELAY * gen_attempt
+                if sleep_with_cancellation_check(delay, check_interval=1.0):
+                    with print_lock:
+                        print(f"    ⏹️  Generation cancelled during retry delay")
+                    return (topic_title, False, "cancelled")
             
             # Step 1: Generate presentation text with Gemini
             try:
@@ -1196,6 +1261,12 @@ def process_toc_file(json_path: Path, output_root: Path) -> Tuple[int, int]:
     
     Returns (success_count, skip_count).
     """
+    # Check for cancellation before starting
+    if is_cancellation_requested():
+        with print_lock:
+            print(f"\n⏹️  Generation cancelled before processing {json_path}")
+        return 0, 0
+    
     try:
         with print_lock:
             print(f"\nProcessing: {json_path}")
@@ -1300,6 +1371,16 @@ def process_toc_file(json_path: Path, output_root: Path) -> Tuple[int, int]:
                 
                 # Process completed tasks
                 for future in as_completed(future_to_topic):
+                    # Check for cancellation during processing
+                    if is_cancellation_requested():
+                        with print_lock:
+                            print(f"  ⏹️  Generation cancelled during file processing")
+                        # Cancel remaining futures if possible
+                        for remaining_future in future_to_topic:
+                            if remaining_future != future and not remaining_future.done():
+                                remaining_future.cancel()
+                        break
+                    
                     topic_title = future_to_topic.get(future, "unknown")
                     try:
                         _, success, message = future.result()
